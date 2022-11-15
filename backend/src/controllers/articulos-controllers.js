@@ -21,8 +21,47 @@ export const getArticulo = async (req, res) => {
             res.status(404)
             res.send("El articulo no se ha encontrado")
         }
-        
-        res.json(result.recordset[0])
+        else{
+            res.json(result.recordset[0])
+        }
+    }
+    catch(e){
+        res.status(500)
+        res.send(e.message)
+    }
+}
+
+export const getArticulosFromSeccion = async (req, res) => {
+    const { id } = req.params
+    try{
+        const pool = await getConnection();
+        const result = await pool.request().input('id', id).query(queries.getArticulosFromSeccion)
+        if(result == null){
+            res.status(404)
+            res.send("El articulo no se ha encontrado")
+        }else{
+            res.json(result.recordset)
+
+        }
+    }
+    catch(e){
+        res.status(500)
+        res.send(e.message)
+    }
+}
+
+export const getArticulosFromCategoria = async (req, res) => {
+    const { id } = req.params
+    try{
+        const pool = await getConnection();
+        const result = await pool.request().input('id', id).query(queries.getArticulosFromCategoria)
+        if(result == null){
+            res.status(404)
+            res.send("El articulo no se ha encontrado")
+        }else
+        {
+            res.json(result.recordset)
+        }
     }
     catch(e){
         res.status(500)

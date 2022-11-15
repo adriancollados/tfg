@@ -9,3 +9,9 @@ POST {{api}}
 ###
 
 GET {{api}}/3
+
+###
+GET {{api}}/categorias/4
+
+###
+GET {{api}}/seccion/8

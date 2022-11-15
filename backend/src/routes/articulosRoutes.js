@@ -11,19 +11,29 @@ router.get('/articulos', articuloController.getArticulos);
 
 /**
  * @swagger
- * /articulos/count:
- *  get:
- *      summary: Obtiene la cantidad de articulos
-*/
-router.get('/articulos/count', articuloController.getArticulosCount);
-
-/**
- * @swagger
  * /articulos/:id:
  *  get:
  *      summary: Obtiene un articulo con cierto id
 */
 router.get('/articulos/:id', articuloController.getArticulo);
+
+/**
+ * @swagger
+ * /articulos/count:
+ *  get:
+ *      summary: Obtiene los articulos de una seccion
+*/
+router.get('/articulos/seccion/:id', articuloController.getArticulosFromSeccion);
+
+/**
+ * @swagger
+ * /articulos/categorias/:id:
+ *  get:
+ *      summary: Obtiene los artiulos de dicha categoria
+ */
+
+router.get('/articulos/categorias/:id', articuloController.getArticulosFromCategoria);
+
 
 /**
  * @swagger
