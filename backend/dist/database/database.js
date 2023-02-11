@@ -1,16 +1,6 @@
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getConnection = getConnection;
-Object.defineProperty(exports, "sql", {
-  enumerable: true,
-  get: function get() {
-    return _mssql["default"];
-  }
-});
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _mssql = _interopRequireDefault(require("mssql"));
@@ -56,3 +46,7 @@ function _getConnection() {
   }));
   return _getConnection.apply(this, arguments);
 }
+module.exports = {
+  sql: _mssql["default"],
+  getConnection: getConnection
+};

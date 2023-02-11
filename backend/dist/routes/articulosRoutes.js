@@ -1,57 +1,75 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports["default"] = void 0;
-var _articulos = require("../controllers/articulos.controllers");
-var _require = require("express"),
-  Router = _require.Router;
-var routerArticulo = Router();
+var router = require("express").Router();
+var articuloController = require("../controllers/articulos-controllers");
 
+/**
+ * @swagger
+ * tag:
+ *  name: Articulos
+ *  description: Articulos endpoint
+ */
 /**
  * @swagger
  * /articulos:
  *  get:
  *      summary: Obtiene todos los articulos
+ *      tags: [Articulos]
 */
-routerArticulo.get('/articulos', _articulos.getArticulos);
-
-/**
- * @swagger
- * /articulos/count:
- *  get:
- *      summary: Obtiene la cantidad de articulos
-*/
-routerArticulo.get('/articulos/count', _articulos.getArticulosCount);
+router.get('/articulos', articuloController.getArticulos);
 
 /**
  * @swagger
  * /articulos/:id:
  *  get:
  *      summary: Obtiene un articulo con cierto id
+ *      tags: [Articulos]
 */
-routerArticulo.get('/articulos/:id', _articulos.getArticulo);
+router.get('/articulos/:id', articuloController.getArticulo);
+
+/**
+ * @swagger
+ * /articulos/count:
+ *  get:
+ *      summary: Obtiene los articulos de una seccion
+ *      tags: [Articulos]
+*/
+router.get('/articulos/seccion/:id', articuloController.getArticulosFromSeccion);
+
+/**
+ * @swagger
+ * /articulos/categorias/:id:
+ *  get:
+ *      summary: Obtiene los artiulos de dicha categoria
+ *      tags: [Articulos]
+ */
+
+router.get('/articulos/categorias/:id', articuloController.getArticulosFromCategoria);
+
 /**
  * @swagger
  * /articulos:
  *  post:
  *      summary: Crea un articulo
- * */
-routerArticulo.post('/articulos', _articulos.createArticulos);
+ *      tags: [Articulos]
+ */
+router.post('/articulos', articuloController.createArticulos);
+
 /**
  * @swagger
  * /articulos/:id:
  *  delete:
  *      summary: Borra un articulo con cierto id
+ *      tags: [Articulos]
 */
-routerArticulo["delete"]('/articulos/:id', _articulos.deleteArticulos);
+router["delete"]('/articulos/:id', articuloController.deleteArticulos);
+
 /**
  * @swagger
  * /articulos/:id:
  *  put:
  *      summary: Modifica un articulo con cierto id
+ *      tags: [Articulos]
 */
-routerArticulo.put('/articulos/:id', _articulos.updateArticulos);
-var _default = routerArticulo;
-exports["default"] = _default;
+router.put('/articulos/:id', articuloController.updateArticulos);
+module.exports = router;

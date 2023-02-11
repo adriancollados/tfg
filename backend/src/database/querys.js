@@ -12,8 +12,7 @@ export const queries = {
 	//clientes
 	getAllClientes: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION1, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO1, E_MAIL, NIF20 from SUPERAMANO1..CLIENTES with(nolock)',
 	getClienteId: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION1, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO1, E_MAIL, NIF20 from SUPERAMANO1..CLIENTES with(nolock) where codcliente = @id',
-	
-
+	spClientes: 'PR_CLIENTES_INSERT',
 
 
 	//secciones
