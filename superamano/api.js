@@ -1,6 +1,8 @@
-const API = 'http://10.0.2.2:3000/articulos'
+const API = 'http://192.168.0.22:3000/articulos'
 
-const getArticulos = async () => {
+export const getArticulos = async () => {
     const res = await fetch(API)
     return await res.json()
 }
+
+

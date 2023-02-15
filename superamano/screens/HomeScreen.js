@@ -1,23 +1,26 @@
-import { View, Text } from 'react-native'
-import React, {useEffect} from 'react'
+import { View, Text, FlatList } from 'react-native'
+import React, {useEffect, useState} from 'react'
 import {getArticulos} from '../api'
-
+import ListaArticulos from '../components/articulos/ListaArticulos'
+import Layout from '../components/Layout'
 
 const HomeScreen = () => {
 
-    const loadHomeScreen =  async () =>{
-        const data = await getArticulos()
-        console.log(data)
-    }
+  const [articulos, setArticulos] = useState([])
 
-    useEffect(() => {
-        loadHomeScreen()
-    }, []);
+  const loadHomeScreen =  async () =>{
+      const data = await getArticulos()
+      setArticulos(data);
+  }
 
-    return (
-    <View>
-      <Text>Home Screen</Text>
-    </View>
+  useEffect(() => {
+      loadHomeScreen()
+  }, []);
+
+  return (
+    <Layout>
+     <ListaArticulos articulos={articulos}></ListaArticulos>
+    </Layout>
   );
 };
 
