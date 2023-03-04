@@ -3,23 +3,16 @@ import React, {useEffect, useState} from 'react'
 import {getArticulos} from '../api'
 import ListaArticulos from '../components/articulos/ListaArticulos'
 import Layout from '../components/Layout'
+import Cart from './Carrito';
 
 const HomeScreen = () => {
 
-  const [articulos, setArticulos] = useState([])
 
-  const loadHomeScreen =  async () =>{
-      const data = await getArticulos()
-      setArticulos(data);
-  }
 
-  useEffect(() => {
-      loadHomeScreen()
-  }, []);
 
   return (
     <Layout>
-     <ListaArticulos articulos={articulos}></ListaArticulos>
+      <Text>Hola HomeScreen</Text>
     </Layout>
   );
 };

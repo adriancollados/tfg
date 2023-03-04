@@ -15,3 +15,4 @@ GET {{api}}/categorias/4
 
 ###
 GET {{api}}/seccion/8
+

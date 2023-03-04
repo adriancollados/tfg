@@ -1,0 +1,32 @@
+@api = http://localhost:3000/clientes
+
+###
+POST {{api}}/register
+Content-Type: application/json
+
+{
+    "NOMBRECLIENTE": "Prueba Prueba",
+    "CIF": "34287923W",
+    "DIRECCION1": "Una calle diferente",
+    "CODPOSTAL": "03690",
+    "POBLACION": "San Vicente del Raspeig",
+    "PROVINCIA": "Alicante",
+    "PAIS": "España",
+    "TELEFONO1": "635262521",
+    "E_MAIL": "emailPrueba@gmail.com",
+    "USUARIO": "prueba4",
+    "PASS": "contraseña",
+    "NUMTARJETA":"1234123412341234",
+    "TARCADUCIDAD": "0226", 
+    "CVC": "333"
+}
+
+
+###
+POST {{api}}/login
+Content-Type: application/json
+
+{
+    "E_MAIL": "emailPrueba@gmail.com",
+    "PASS": "contraseña"
+}

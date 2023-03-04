@@ -2,10 +2,24 @@
  import React from 'react'
  
  const ListaArticulos = () => {
+
+
+   const [articulos, setArticulos] = useState([])
+
+  const loadListaArticulos =  async () =>{
+      const data = await getArticulos()
+      setArticulos(data);
+  }
+
+
+  useEffect(() => {
+    loadListaArticulos()
+  }, []);
    return (
-     <View>
-       <Text>ListaArticulos</Text>
-     </View>
+    <Layout>
+      <ListaArticulos articulos={articulos}></ListaArticulos>
+      <Cart />
+   </Layout>
    )
  }
  
