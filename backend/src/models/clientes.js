@@ -1,5 +1,6 @@
 import { compareSync, hashSync, compare } from 'bcrypt';
 const crypto = require('crypto');
+import { decode } from 'base64-js';
 
 
 class Cliente {
@@ -256,7 +257,6 @@ Cliente.encryptCardNumber = function(cardNumber, key) {
     let encrypted = cipher.update(cardNumber, 'utf8', 'base64'); // Cifra el número de tarjeta
     encrypted += cipher.final('base64'); // Finaliza el cifrado
     const encryptedCardNumber = `${iv.toString('hex')}:${encrypted}`; // Concatena el vector de inicialización y el número de tarjeta cifrado
-    console.log("EncryptedCard: " + encryptedCardNumber); //
     return encryptedCardNumber;
   }
   
@@ -268,10 +268,35 @@ Cliente.encryptCardNumber = function(cardNumber, key) {
       const decipher = crypto.createDecipheriv(algorithm, keyHash, iv); // Descifrador AES
       let decrypted = decipher.update(encrypted, 'base64', 'utf8'); // Descifra el número de tarjeta
       decrypted += decipher.final('utf8'); // Finaliza el descifrado
-      console.log("Decrypted: " + decrypted);
       return decrypted;
   }
-  
+
+  function isBase64(str) {
+    if (typeof str !== 'string') {
+      return false;
+    }
+    const base64Regex = /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+    return base64Regex.test(str);
+  }
+
+  Cliente.decodeBase64Credentials = function(credentials) {
+    console.log('decoding base64 credentials');
+    if(!isBase64(credentials)) {
+        console.log('Invalid credentials format');
+    }
+    else{
+        try{
+            const decodedCredentials = atob(credentials);
+            const [ email, password ] = decodedCredentials.split(':');
+            return [email, password];
+
+        }
+        catch(error){
+            console.error('Error decoding base64 credentials:', error);
+            return null;
+        }
+    }
+}
 
 
 module.exports = Cliente;

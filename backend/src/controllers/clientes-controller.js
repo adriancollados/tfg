@@ -71,33 +71,35 @@ export const login = async (req, res) => {
 
     try {
         const pool = await getConnection();
-
-        const { E_MAIL, PASS } = req.body;
+        console.log(req.body.t)
+        const [E_MAIL, PASS] = Cliente.decodeBase64Credentials(req.body.t)
+        console.log(E_MAIL + ' ' + PASS) 
         if (E_MAIL && PASS) {
             const user = await pool.request().input('E_MAIL', E_MAIL).query(queries.getClienteLogin)
-        if (user) {
-            console.log(user.recordset[0].pass)
-            const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
-            if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
-                res.status(201);
-                return res.send('OK');
+            if (user) {
+                console.log(user.recordset[0].pass)
+                const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
+                if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
+                    res.status(201);
+                    res.json({
+                        errorMessage: 'OK'});
+                } else {
+                    res.status(404);
+                    res.json({
+                        errorMessage: "WRONG_PASSWORD",
+                    })
+                }
             } else {
                 res.status(404);
                 res.json({
-                    errorMessage: "WRONG_PASSWORD",
+                    errorMessage: "NOT_FOUND",
                 })
             }
-        } else {
-            res.status(404);
-            res.json({
-                errorMessage: "NOT_FOUND",
-            })
-        }
         } else {
             res.status(400);
             res.json({
                 errorMessage: "INVALID_INPUT_FIELDS",
-                fieldsErrors: [{
+                fieldsErrors: JSON.stringify([{
                     property: "name",
                     constraints: {
                     "isString": "name must be a string"
@@ -109,11 +111,13 @@ export const login = async (req, res) => {
                     "isString": "password must be a string"
                     }
                 }
-                ]
+                ])
             });
         }
     } catch (e) {
         res.status(500)
         res.send(e.message)
     }
+
+    return res
 }

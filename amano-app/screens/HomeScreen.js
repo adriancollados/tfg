@@ -8,16 +8,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import Carousel from 'react-native-snap-carousel';
+//import Carousel from 'react-native-snap-carousel';
 
 
 export default function HomeScreen({navigation}) {
-  const [gamesTab, setGamesTab] = useState(1);
 
-  /* const renderBanner = ({item, index}) => {
-    return <BannerSlider data={item} />;
-  };
- */
   return (
     <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView style={{padding: 20}}>

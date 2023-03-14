@@ -14,6 +14,10 @@ var queries = {
   //clientes
   getAllClientes: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION1, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO1, E_MAIL, NIF20 from SUPERAMANO1..CLIENTES with(nolock)',
   getClienteId: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION1, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO1, E_MAIL, NIF20 from SUPERAMANO1..CLIENTES with(nolock) where codcliente = @id',
+  spClientes: 'PR_CLIENTES_INSERT',
+  addCliente: 'insert into clientes(CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION1, CODPOSTAL, POBLACION, PROVINCIA, PAIS, TELEFONO1, E_MAIL, USUARIO, PASS, NUMTARJETA, TARCADUCIDAD, CVC)  values(@CODCLIENTE, @NOMBRECLIENTE, @CIF, @DIRECCION1, @CODPOSTAL, @POBLACION, @PROVINCIA, @PAIS, @TELEFONO1, @E_MAIL, @USUARIO, @PASS, @NUMTARJETA, @TARCADUCIDAD, @CVC)',
+  getLastIdCLiente: 'select top 1 CODCLIENTE from clientes order by 1 desc',
+  getClienteLogin: 'select pass from clientes where E_MAIL = @E_MAIL',
   //secciones
   getSeccionesFromCategoriaID: ' select NUMSECCION, DESCRIPCION, version from SUPERAMANO1..secciones with(nolock) where NUMDPTO = @id and VISIBLEWEB = \'T\'',
   //Despartamentos(categorias)
