@@ -5,13 +5,16 @@ import RegistroScreen from '../screens/RegistroScreen';
 
 const Stack = createNativeStackNavigator();
 
-const AuthStack = ({isLoggedIn}) => {
+const AuthStack = ({setIsLoggedIn}) => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="Login" > {(props) => <LoginS {...props} setIsLoggedIn={isLoggedIn} />} </Stack.Screen>
+      <Stack.Screen name="Login">
+        {(props) => <LoginS {...props} setIsLoggedIn={setIsLoggedIn} />}
+      </Stack.Screen>
       <Stack.Screen name="RegistroScreen" component={RegistroScreen} />
     </Stack.Navigator>
   );
 };
+
 
 export default AuthStack;

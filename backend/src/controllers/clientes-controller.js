@@ -1,6 +1,7 @@
 import { getConnection, sql, queries } from '../database'
 const Cliente = require('../models/clientes');
 import body from 'express-validator';
+const { getTokenFromUser } = require('../utils/auth'); 
 
 
 const IVKey = "68576D5A7134743777217A25432A462D";
@@ -77,12 +78,13 @@ export const login = async (req, res) => {
         if (E_MAIL && PASS) {
             const user = await pool.request().input('E_MAIL', E_MAIL).query(queries.getClienteLogin)
             if (user) {
-                console.log(user.recordset[0].pass)
+                console.log(user.recordset[0])
                 const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
                 if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
                     res.status(201);
                     res.json({
-                        errorMessage: 'OK'});
+                        errorMessage: "OK",
+                        authToken: getTokenFromUser(user)});
                 } else {
                     res.status(404);
                     res.json({

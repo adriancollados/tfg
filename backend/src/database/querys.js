@@ -16,7 +16,7 @@ export const queries = {
 
 	addCliente: 'insert into clientes(CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION1, CODPOSTAL, POBLACION, PROVINCIA, PAIS, TELEFONO1, E_MAIL, USUARIO, PASS, NUMTARJETA, TARCADUCIDAD, CVC)  values(@CODCLIENTE, @NOMBRECLIENTE, @CIF, @DIRECCION1, @CODPOSTAL, @POBLACION, @PROVINCIA, @PAIS, @TELEFONO1, @E_MAIL, @USUARIO, @PASS, @NUMTARJETA, @TARCADUCIDAD, @CVC)',
 	getLastIdCLiente: 'select top 1 CODCLIENTE from clientes order by 1 desc',
-	getClienteLogin: 'select pass from clientes where E_MAIL = @E_MAIL',
+	getClienteLogin: 'select codcliente, nombrecliente, pass from clientes where E_MAIL = @E_MAIL',
 
 
 	//secciones

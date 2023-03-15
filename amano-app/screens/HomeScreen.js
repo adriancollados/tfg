@@ -14,7 +14,6 @@ import {
 export default function HomeScreen({navigation}) {
 
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView style={{padding: 20}}>
         <View>
           <Text>Home view</Text>
@@ -75,6 +74,5 @@ export default function HomeScreen({navigation}) {
             /> 
             ))} */}
       </ScrollView>
-    </SafeAreaView>
   );
 }

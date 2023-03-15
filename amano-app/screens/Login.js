@@ -8,7 +8,7 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null); // Nuevo estado para el mensaje de error
-    const { data, loading, error, login } = useLogin(email, password);
+    const { data, loading, error, login} = useLogin(email, password);
 
     const validateEmail = (email) => {
         // Expresión regular para validar el formato de correo electrónico
@@ -16,7 +16,8 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
         return emailRegex.test(email);
     }
 
-    const handleLogin = () => {
+    const handleLogin = (event) => {
+      event.preventDefault()
           if (!validateEmail(email)) {
              // Mostrar un mensaje de error
              setErrorMessage('El correo electrónico no tiene formato válido');
@@ -25,22 +26,28 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
              }, 3000);//Desaparece el mensaje despues de 3 segundos
          }
          else{
-             login();
-             console.log("data: " ,data)
-             console.log("Error: ", error)
-             setIsLoggedIn(true)
+            console.log("Vamos a realizar el login")
+            login();
+            console.log("Login realizado")
+            if(data === "OK"){
+              console.log("Estoy en OK ", data)
+              setIsLoggedIn(true)
+            }
+            else{
+              console.log("Estoy aqui ", data)
+              setErrorMessage(data)
+            }
          } 
      }
  
 
     return (
         <KeyboardAvoidingView  style={styles.container}>
-            {loading && <Text style={styles.error}>Loading...</Text>}
             <View style={styles.image}>
                 <Image source={ require('../assets/amano-supermercados-logo-1597394803.jpg')} style={{width: 300, height: 60, marginBottom: 80}}/>
             </View>
             <Text style={styles.title}>¡Bienvenido de nuevo!</Text>
-            {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
+            
             <TextInput style={styles.input} placeholder="Email" 
                 onChangeText={setEmail}
                 value={email}
@@ -55,6 +62,7 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Accede a tu cuenta</Text>
             </TouchableOpacity>
+            {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
             <TouchableOpacity onPress={() => navigation.navigate('RegistroScreen')}>
               <Text style={styles.link}>¿No estás registrado? Regístrate aquí</Text>
             </TouchableOpacity>

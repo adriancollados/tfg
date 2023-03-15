@@ -10,8 +10,26 @@ const RegistroScreen =  ({navigation}) => {
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
 
-  const handleRegister = () => {
+  const validateEmail = (email) => {
+    // Expresión regular para validar el formato de correo electrónico
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+  const handleRegister = (event) => {
+    event.preventDefault()
     // Aquí puedes manejar la lógica de registro
+    if (!validateEmail(email)) {
+      // Mostrar un mensaje de error
+      setErrorMessage('El correo electrónico no tiene formato válido');
+      setTimeout(() => {
+          setErrorMessage(null);
+      }, 3000);//Desaparece el mensaje despues de 3 segundos
+    }
+    else{
+      const data = {nombreCliente, cif, telefono1, email, pass}
+
+    }
   }
 
   return (

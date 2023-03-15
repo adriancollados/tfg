@@ -1,11 +1,14 @@
-import { View, Text } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import React from 'react'
 
-const PerfilScreen = () => {
+
+function PerfilScreen({navigation}){
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>Pantalla de perfil</Text>
-        </View>
+        <ScrollView style={{padding: 20}}>
+          <View>
+            <Text>Pantalla de perfil</Text>
+          </View>
+        </ScrollView>
       );
 }
     
