@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import LoginScreen from './LoginScreen';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, KeyboardAvoidingView } from 'react-native';
+import {encryptCardNumber} from '../components/clientes';
+import { useRegistro } from '../api';
 
+
+const key = "68576D5A7134743777217A25432A462D"; 
 
 const RegistroScreen =  ({navigation}) => {
   const [nombreCliente, setNombreCliente] = useState('');
@@ -9,6 +12,7 @@ const RegistroScreen =  ({navigation}) => {
   const [telefono1, setTelefono1] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
+  const{datos, error, registro} = useRegistro(nombreCliente, cif, telefono1, email, pass)
 
   const validateEmail = (email) => {
     // Expresión regular para validar el formato de correo electrónico
@@ -27,56 +31,62 @@ const RegistroScreen =  ({navigation}) => {
       }, 3000);//Desaparece el mensaje despues de 3 segundos
     }
     else{
-      const data = {nombreCliente, cif, telefono1, email, pass}
+      console.log("Realizando registro..")
+      registro()
+      
 
     }
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{alignItems: 'center'}}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 50}>
-        <View style={{marginBottom: 30}}>
-          <Text style={styles.title}>Crear una cuenta</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                  <Text style={styles.link}>¿Ya tiene una cuenta? Inicie sesión</Text>
-          </TouchableOpacity> 
-        </View>
-      
-      <TextInput  style={styles.input}
-        placeholder="Nombre del cliente"
-        value={nombreCliente}
-        onChangeText={setNombreCliente}
-        required
-      />
-      <TextInput  style={styles.input}
-        placeholder="CIF"
-        value={cif}
-        onChangeText={setCif}
-        required
-      />
-      <TextInput style={styles.input}
-        placeholder="Teléfono"
-        value={telefono1}
-        onChangeText={setTelefono1}
-      />
-      <TextInput style={styles.input}
-        placeholder="Correo electrónico"
-        value={email}
-        onChangeText={setEmail}
-        required
-      />
-      <TextInput style={styles.input}
-        placeholder="Contraseña"
-        value={pass}
-        onChangeText={setPass}
-        secureTextEntry={true}
-        required
-      />
-      <TouchableOpacity style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Guardar</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 50}
+    >
+      <ScrollView style={styles.container} contentContainerStyle={{alignItems: 'center'}}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 50}>
+          <View style={{marginBottom: 30}}>
+            <Text style={styles.title}>Crear una cuenta</Text>
+            
+          </View>
+        
+        <TextInput  style={styles.input}
+          placeholder="Nombre del cliente"
+          value={nombreCliente}
+          onChangeText={setNombreCliente}
+          required
+        />
+        <TextInput  style={styles.input}
+          placeholder="CIF"
+          value={cif}
+          onChangeText={setCif}
+          required
+        />
+        <TextInput style={styles.input}
+          placeholder="Teléfono"
+          value={telefono1}
+          onChangeText={setTelefono1}
+        />
+        <TextInput style={styles.input}
+          placeholder="Correo electrónico"
+          value={email}
+          onChangeText={setEmail}
+          required
+        />
+        <TextInput style={styles.input}
+          placeholder="Contraseña"
+          value={pass}
+          onChangeText={setPass}
+          secureTextEntry={true}
+          required
+        />
+        <TouchableOpacity style={styles.button} onPress={navigation.navigate("LoginS")}>
+          <Text style={styles.buttonText}>Guardar</Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 

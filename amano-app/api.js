@@ -3,6 +3,8 @@ const APICli = 'http://192.168.0.22:3000/clientes'
 import {encodePassword} from './components/clientes';
 import { useState, useEffect } from 'react';
 
+
+
 let token = null;
 const setToken = newToken =>{
     token = 'Bearer ' + newToken
@@ -20,7 +22,7 @@ export const useLogin = (email, password) => {
     const [loading, setLoading] = useState(false)
     const [error , setError] = useState(null);
 
-    const body = encodePassword({email: email, password: password})
+    const body = {email: email, password: password}
     const options = {
         method: 'POST',
         headers: {
@@ -44,12 +46,12 @@ export const useLogin = (email, password) => {
     return {data, loading, error, login };
 }
 
-export const registro = (email, password) => {
+export const useRegistro = (user) => {
     const [data, setData] = useState(null)
     const [loading, setLoading] = useState(false)
     const [error , setError] = useState(null);
 
-    const body = encodePassword({email: email, password: password})
+    const body = encodePassword({data: user})
     const options = {
         method: 'POST',
         headers: {
@@ -58,15 +60,15 @@ export const registro = (email, password) => {
         body: JSON.stringify({t: body})
     }
 
-   const login = () => {
+   const registro = () => {
         setLoading(true)
-        fetch(APICli + '/login', options)
+        fetch(APICli + '/register', options)
             .then((response) => response.json())
             .then((data) => setData(data.errorMessage))
             .catch((error) => setError(error))
             .finally(() => setLoading(false))
     }
 
-    return {data, loading, error, login };
+    return {data, loading, error, login, registro };
 }
 

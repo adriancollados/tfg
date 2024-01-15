@@ -4,9 +4,11 @@ import CryptoJS from 'crypto-js';
 
 
 export function encryptCardNumber(cardNumber, key) {
+    console.log("Dentro de la funcion: " + cardNumber + " " + key)
     const algorithm = 'aes-256-cbc'; // Algoritmo de cifrado AES-256-CBC
     const keyHash = CryptoJS.createHash('sha256').update(key, 'utf8').digest('base64').substr(0, 32); // Hash de la clave
     const iv = CryptoJS.randomBytes(16); // Vector de inicialización aleatorio
+    console.log("encriptando...")
     const cipher = CryptoJS.createCipheriv(algorithm, keyHash, iv); // Cifrador AES
     let encrypted = cipher.update(cardNumber, 'utf8', 'base64'); // Cifra el número de tarjeta
     encrypted += cipher.final('base64'); // Finaliza el cifrado

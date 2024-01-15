@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const articuloController = require("../controllers/articulos-controllers");
+const { isAuthenticated } = require("../utils/auth");
 
 /**
  * @swagger
@@ -14,7 +15,7 @@ const articuloController = require("../controllers/articulos-controllers");
  *      summary: Obtiene todos los articulos
  *      tags: [Articulos]
 */
-router.get('/articulos', articuloController.getArticulos);
+router.get('/articulos', isAuthenticated, articuloController.getArticulos);
 
 /**
  * @swagger
@@ -23,7 +24,7 @@ router.get('/articulos', articuloController.getArticulos);
  *      summary: Obtiene un articulo con cierto id
  *      tags: [Articulos]
 */
-router.get('/articulos/:id', articuloController.getArticulo);
+router.get('/articulos/:id', isAuthenticated, articuloController.getArticulo);
 
 /**
  * @swagger
@@ -32,7 +33,7 @@ router.get('/articulos/:id', articuloController.getArticulo);
  *      summary: Obtiene los articulos de una seccion
  *      tags: [Articulos]
 */
-router.get('/articulos/seccion/:id', articuloController.getArticulosFromSeccion);
+router.get('/articulos/seccion/:id', isAuthenticated, articuloController.getArticulosFromSeccion);
 
 /**
  * @swagger
@@ -42,7 +43,35 @@ router.get('/articulos/seccion/:id', articuloController.getArticulosFromSeccion)
  *      tags: [Articulos]
  */
 
-router.get('/articulos/categorias/:id', articuloController.getArticulosFromCategoria);
+router.get('/articulos/categorias/:id', isAuthenticated, articuloController.getArticulosFromCategoria);
+
+/**
+ * @swagger
+ * /articulos/categorias/{categoriaId}/secciones/{seccionId}:
+ *   get:
+ *     summary: Obtiene los artículos de una sección y categoría
+ *     tags: [Articulos]
+ *     parameters:
+ *       - name: categoriaId
+ *         in: path
+ *         required: true
+ *         description: ID de la categoría
+ *         schema:
+ *           type: integer
+ *       - name: seccionId
+ *         in: path
+ *         required: true
+ *         description: ID de la sección
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: OK
+ *       404:
+ *         description: No se encontraron artículos para la categoría y sección especificadas
+ */
+
+router.get('/articulos/categorias/:categoriaId/secciones/:seccionId', isAuthenticated, articuloController.getArticulosFromSeccionCategoria);
 
 
 /**

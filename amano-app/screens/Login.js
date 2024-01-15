@@ -18,6 +18,7 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
 
     const handleLogin = (event) => {
       event.preventDefault()
+      try{
           if (!validateEmail(email)) {
              // Mostrar un mensaje de error
              setErrorMessage('El correo electrónico no tiene formato válido');
@@ -28,7 +29,6 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
          else{
             console.log("Vamos a realizar el login")
             login();
-            console.log("Login realizado")
             if(data === "OK"){
               console.log("Estoy en OK ", data)
               setIsLoggedIn(true)
@@ -38,16 +38,21 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
               setErrorMessage(data)
             }
          } 
+        }
+        catch(error){
+          console.log("Vuelve al catch: " + error)
+        }
      }
  
 
     return (
-        <KeyboardAvoidingView  style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 50}>
             <View style={styles.image}>
                 <Image source={ require('../assets/amano-supermercados-logo-1597394803.jpg')} style={{width: 300, height: 60, marginBottom: 80}}/>
             </View>
             <Text style={styles.title}>¡Bienvenido de nuevo!</Text>
-            
             <TextInput style={styles.input} placeholder="Email" 
                 onChangeText={setEmail}
                 value={email}
@@ -62,13 +67,13 @@ const LoginS = ({navigation, setIsLoggedIn})  =>{
             <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Accede a tu cuenta</Text>
             </TouchableOpacity>
-            {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
+            
             <TouchableOpacity onPress={() => navigation.navigate('RegistroScreen')}>
               <Text style={styles.link}>¿No estás registrado? Regístrate aquí</Text>
             </TouchableOpacity>
             {error && <Text style={styles.error}>{error}</Text>}
         </KeyboardAvoidingView>
-        
+
     );
 }
 

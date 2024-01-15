@@ -287,7 +287,12 @@ Cliente.encryptCardNumber = function(cardNumber, key) {
     else{
         try{
             const decodedCredentials = atob(credentials);
-            const [ email, password ] = decodedCredentials.split(':');
+
+            // Dividir la cadena en email y contraseña
+            const [email, password] = decodedCredentials.split(':');
+
+
+            
             return [email, password];
 
         }

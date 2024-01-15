@@ -39,3 +39,8 @@ Content-Type: application/json
 {
     "t":"ZW1haWxQcnVlYmFAZ21haWwuY29tOnBydWViYTQ="
 }
+
+###
+GET {{api}}/perfil/33029
+Content-Type: application/json
+Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODA4ODAyMjl9.769UOM5P5Ty7AVD43GRm3bEsioCrlVsTQx6KxR0noVw'

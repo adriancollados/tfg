@@ -17,10 +17,10 @@ function getTokenFromAuthHeader(req) {
   return undefined
 }
 
-/**
- * Login Required middleware.
+
+// Login Required middleware.
  
-isAuthenticated = (req, res, next) => {
+const isAuthenticated = (req, res, next) => {
   const token = getTokenFromAuthHeader(req);
 
   if (!token) {
@@ -38,8 +38,6 @@ isAuthenticated = (req, res, next) => {
 
     req.user = userData;
 
-    beeline.addTraceContext({...userData});
-
     return next();
 
   } catch (err) {
@@ -51,9 +49,10 @@ isAuthenticated = (req, res, next) => {
 
     return;
   }
-};*/
+};
 
 module.exports = {
     getTokenFromUser,
+    isAuthenticated
     // otras funciones que se exportan, si las hay
   }

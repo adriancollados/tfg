@@ -6,7 +6,7 @@ import { Icon } from 'react-native-elements';
 
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
-import HomeScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/InitialScreen';
 import CartScreen from '../screens/Carrito';
 import Perfil from '../screens/Perfil'
 

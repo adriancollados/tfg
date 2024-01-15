@@ -8,12 +8,13 @@ const IVKey = "68576D5A7134743777217A25432A462D";
 
 export const getCliente = async (req, res) => {
     try {
+        const id = req.params.id;
         const pool = await getConnection();
-        const result = await pool.request().input('id', id).query(queries.getAllProducts)
+        const result = await pool.request().input('id', id).query(queries.getClienteId)
         res.json(result.recordset)
     } catch (e) {
         res.status(500)
-        res.send(e.message)
+        res.send({error: e.message})
     }
 
 }
@@ -31,8 +32,8 @@ export const registro = async (req, res) => {
             
             if(newCodCli == null) {
                 res.status(500);
-                return res.json({
-                    errorMessage: "Internal server error",
+                return res.send({
+                    error: "Internal server error",
                 })
             }            
             const result = await pool.request()
@@ -58,13 +59,11 @@ export const registro = async (req, res) => {
         }
         else {
             res.status(400);
-            res.json({
-                errorMessage: "INVALID_INPUT_FIELDS",
-            })
+            res.send({error: "INVALID_INPUT_FIELDS"})
         }
     } catch (e) {
         res.status(500)
-        res.send(e.message)
+        res.send({error: e.message})
     }
 }
 
@@ -72,36 +71,26 @@ export const login = async (req, res) => {
 
     try {
         const pool = await getConnection();
-        console.log(req.body.t)
         const [E_MAIL, PASS] = Cliente.decodeBase64Credentials(req.body.t)
-        console.log(E_MAIL + ' ' + PASS) 
         if (E_MAIL && PASS) {
             const user = await pool.request().input('E_MAIL', E_MAIL).query(queries.getClienteLogin)
             if (user) {
                 console.log(user.recordset[0])
                 const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
                 if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
-                    res.status(201);
-                    res.json({
-                        errorMessage: "OK",
-                        authToken: getTokenFromUser(user)});
+                    const token = getTokenFromUser(user.recordset[0])
+                    res.status(201).send({data: "OK", user: user.recordset[0].nombrecliente, token: token}) ;
                 } else {
-                    res.status(404);
-                    res.json({
-                        errorMessage: "WRONG_PASSWORD",
-                    })
+                    res.status(404).send({errorMessage: "WRONG_PASSWORD"});
                 }
             } else {
-                res.status(404);
-                res.json({
-                    errorMessage: "NOT_FOUND",
-                })
+                res.status(404).send(JSON.stringify(errorMessage, "NOT_FOUND"));
             }
         } else {
             res.status(400);
             res.json({
                 errorMessage: "INVALID_INPUT_FIELDS",
-                fieldsErrors: JSON.stringify([{
+                fieldsErrors: [{
                     property: "name",
                     constraints: {
                     "isString": "name must be a string"
@@ -113,13 +102,13 @@ export const login = async (req, res) => {
                     "isString": "password must be a string"
                     }
                 }
-                ])
+                ]
             });
         }
     } catch (e) {
+        console.log({error: e.message});
         res.status(500)
-        res.send(e.message)
+        res.send({error: e.message})
     }
-
     return res
 }
