@@ -52,12 +52,17 @@ export const getArticulosFromSeccion = async (req, res) => {
 
 export const getArticulosFromSeccionCategoria = async (req, res) => {
     const { categoriaId, seccionId } = req.params
+    const { pageNumber = 1, pageSize = 15 } = req.query; // Configuración de la paginación
     try {
         const pool = await getConnection();
+        const startIndex = (pageNumber - 1) * pageSize; // Índice inicial de la paginación
+
         const result = await pool
           .request()
           .input('categoriaId', categoriaId)
           .input('seccionId', seccionId)
+          .input('startIndex', startIndex)
+          .input('pageSize', pageSize)
           .query(queries.getArticulosFromSeccionCategoria);
     
         if (!result.recordset || result.recordset.length === 0) {

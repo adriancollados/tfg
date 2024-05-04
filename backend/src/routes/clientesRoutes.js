@@ -52,4 +52,6 @@ router.get('/clientes/perfil/:id', isAuthenticated, clienteController.getCliente
 
 
 
+
+
 module.exports = router;

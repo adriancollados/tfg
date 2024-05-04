@@ -287,13 +287,16 @@ Cliente.encryptCardNumber = function(cardNumber, key) {
     else{
         try{
             const decodedCredentials = atob(credentials);
+            console.log(decodedCredentials);
+            // Convertir la cadena decodificada a un objeto JavaScript
+            const credentialsObject = JSON.parse(decodedCredentials);
+            console.log(credentialsObject)
+            // Extraer valores del objeto
+            const email = credentialsObject.email;
+            const pass = credentialsObject.pass;
 
-            // Dividir la cadena en email y contraseña
-            const [email, password] = decodedCredentials.split(':');
+            return [email, pass];
 
-
-            
-            return [email, password];
 
         }
         catch(error){

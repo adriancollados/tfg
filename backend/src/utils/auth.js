@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const tokenSecret = process.env.SECRET || 'secret';
 
 function getTokenFromUser(user) {
-  return jwt.sign({ id: user.codcliente, nombre: user.nombrecliente }, tokenSecret)
+  return jwt.sign({ id: user.codcliente, nombre: user.nombrecliente }, tokenSecret, {expiresIn: 3600})
 }
 
 function getTokenFromAuthHeader(req) {

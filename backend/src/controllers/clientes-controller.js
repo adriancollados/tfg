@@ -10,8 +10,13 @@ export const getCliente = async (req, res) => {
     try {
         const id = req.params.id;
         const pool = await getConnection();
-        const result = await pool.request().input('id', id).query(queries.getClienteId)
-        res.json(result.recordset)
+        const result  = await pool.request().input('id', id).query(queries.getClienteId)
+        if(result != null) {
+            res.status(200).send(result.recordset[0])
+        } else {
+            res.status(404).send({errorMessage: "NOT_FOUND"});
+        }
+        
     } catch (e) {
         res.status(500)
         res.send({error: e.message})
@@ -39,19 +44,14 @@ export const registro = async (req, res) => {
             const result = await pool.request()
                 .input('CODCLIENTE', newCodCli)
                 .input('NOMBRECLIENTE', req.body.NOMBRECLIENTE)
-                .input('CIF', req.body.CIF)
-                .input('DIRECCION1', req.body.DIRECCION1)
+                .input('DIRECCION', req.body.DIRECCION1)
                 .input('CODPOSTAL', req.body.CODPOSTAL)
                 .input('POBLACION', req.body.POBLACION)
                 .input('PROVINCIA', req.body.PROVINCIA)
-                .input('PAIS', req.body.PAIS)
-                .input('TELEFONO1', req.body.TELEFONO1)
-                .input('E_MAIL', req.body.E_MAIL)
-                .input('USUARIO', req.body.USUARIO)
+                .input('TELEFONO', req.body.TELEFONO)
+                .input('EMAIL', req.body.E_MAIL)
                 .input('PASS', password)
-                .input('NUMTARJETA', Cliente.maskCardNumber(req.body.NUMTARJETA))
-                .input('TARCADUCIDAD', req.body.TARCADUCIDAD)
-                .input('CVC', cvc)
+                .input('FECHAALTA', req.body.FECHAALTA)
                 .query(queries.addCliente)
             console.log('OK')
             return res.send(result.recordset)
@@ -71,20 +71,25 @@ export const login = async (req, res) => {
 
     try {
         const pool = await getConnection();
-        const [E_MAIL, PASS] = Cliente.decodeBase64Credentials(req.body.t)
-        if (E_MAIL && PASS) {
-            const user = await pool.request().input('E_MAIL', E_MAIL).query(queries.getClienteLogin)
+        const [EMAIL, PASS] = Cliente.decodeBase64Credentials(req.body.t)
+        console.log(EMAIL + '/' + PASS)
+        if (EMAIL && PASS) {
+            const user = await pool.request().input('EMAIL', EMAIL).query(queries.getClienteLogin)
             if (user) {
-                console.log(user.recordset[0])
+                const obj = {
+                    codcliente: user.recordset[0].codcliente,
+                    nombrecliente: user.recordset[0].nombrecliente
+                  };
+                console.log(obj)
                 const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
                 if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
                     const token = getTokenFromUser(user.recordset[0])
-                    res.status(201).send({data: "OK", user: user.recordset[0].nombrecliente, token: token}) ;
+                    res.status(201).send({data: "OK",codcliente: user.recordset[0].codcliente, user: user.recordset[0].nombrecliente, token: token}) ;
                 } else {
                     res.status(404).send({errorMessage: "WRONG_PASSWORD"});
                 }
             } else {
-                res.status(404).send(JSON.stringify(errorMessage, "NOT_FOUND"));
+                res.status(404).send({errorMessage: "NOT_FOUND"});
             }
         } else {
             res.status(400);

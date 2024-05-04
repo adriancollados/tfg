@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "amano-app",
-    "slug": "amano-app",
+    "name": "app-amano",
+    "slug": "app-amano",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
