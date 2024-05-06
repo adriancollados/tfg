@@ -21,36 +21,147 @@ const { isAuthenticated } = require("../utils/auth");
 /**
  * @swagger
  * /clientes/login:
- *  post:
- *      summary: Login de clientes
- *      tags: [clientes]
-*/
+ *   post:
+ *     summary: Iniciar sesión de cliente
+ *     tags: 
+ *       - clientes
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               t:
+ *                 type: string
+ *     responses:
+ *       '201':
+ *         description: Inicio de sesión exitoso
+ *       '400':
+ *         description: Error en los campos de entrada
+ *       '404':
+ *         description: Credenciales incorrectas
+ *       '500':
+ *         description: Error interno del servidor
+ */
 router.post('/clientes/login',[body('E_MAIL').isEmail().withMessage("El campo debe ser un email")], clienteController.login);
 
 
 /**
  * @swagger
  * /clientes/registro:
- *  post:
- *      summary: Registro de clientes
- *      tags: [clientes]
-*/
+ *   post:
+ *     summary: Registro de nuevo cliente
+ *     tags: 
+ *       - clientes
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               NOMBRECLIENTE:
+ *                 type: string
+ *               DIRECCION1:
+ *                 type: string
+ *               CODPOSTAL:
+ *                 type: string
+ *               POBLACION:
+ *                 type: string
+ *               PROVINCIA:
+ *                 type: string
+ *               TELEFONO:
+ *                 type: string
+ *               E_MAIL:
+ *                 type: string
+ *               PASS:
+ *                 type: string
+ *               FECHAALTA:
+ *                 type: string
+ *               CIF:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Cliente registrado correctamente
+ *       '400':
+ *         description: Error en los campos de entrada
+ *       '500':
+ *         description: Error interno del servidor
+ */
 router.post('/clientes/register', [
-    body('E_MAIL').isEmail().withMessage("El campo debe ser un email"),
+    body('EMAIL').isEmail().withMessage("El campo debe ser un email"),
     body('PASS').isLength({min: 6}).withMessage("Contraseña debe tener mínimo 6 dígitos de longitud"),
-    body('TELEFONO1').isInt().withMessage("Deben ser números enteros")],
+    body('TELEFONO').isInt().withMessage("Deben ser números enteros")],
     clienteController.registro);
 
 /**
  * @swagger
- * /perfil/perfil:
- *  get:
- *      summary: Get cliente perfil 
- *      tags: [clientes]
-*/
+ * /clientes/perfil/{id}:
+ *   get:
+ *     summary: Obtener perfil del cliente por ID
+ *     tags: 
+ *       - clientes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del cliente a obtener
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Perfil del cliente obtenido correctamente
+ *       '404':
+ *         description: Cliente no encontrado
+ *       '500':
+ *         description: Error interno del servidor
+ */
 router.get('/clientes/perfil/:id', isAuthenticated, clienteController.getCliente);
 
 
+/**
+ * @swagger
+ * /clientes/perfil/{id}:
+ *   put:
+ *     summary: Editar perfil
+ *     tags: 
+ *       - clientes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del cliente a editar
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               NOMBRECLIENTE:
+ *                 type: string
+ *               DIRECCION:
+ *                 type: string
+ *               TELEFONO:
+ *                 type: integer
+ *               CODCLIENTE:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Perfil actualizado correctamente
+ *       '400':
+ *         description: Error en los campos de entrada
+ *       '404':
+ *         description: Perfil no encontrado
+ *       '500':
+ *         description: Error interno del servidor
+ */
+router.put('/clientes/perfil/:id', [
+    body('TELEFONO').optional().isInt().withMessage("TELEFONO debe ser un número entero"),
+], isAuthenticated, clienteController.editarPerfil);
 
 
 

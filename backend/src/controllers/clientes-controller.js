@@ -21,7 +21,6 @@ export const getCliente = async (req, res) => {
         res.status(500)
         res.send({error: e.message})
     }
-
 }
 
 export const registro = async (req, res) => {
@@ -52,6 +51,7 @@ export const registro = async (req, res) => {
                 .input('EMAIL', req.body.E_MAIL)
                 .input('PASS', password)
                 .input('FECHAALTA', req.body.FECHAALTA)
+                .input('CIF', req.body.CIF)
                 .query(queries.addCliente)
             console.log('OK')
             return res.send(result.recordset)
@@ -80,7 +80,6 @@ export const login = async (req, res) => {
                     codcliente: user.recordset[0].codcliente,
                     nombrecliente: user.recordset[0].nombrecliente
                   };
-                console.log(obj)
                 const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
                 if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
                     const token = getTokenFromUser(user.recordset[0])
@@ -116,4 +115,60 @@ export const login = async (req, res) => {
         res.send({error: e.message})
     }
     return res
+}
+
+
+export const editarPerfil = async (req, res) => { 
+    const {id} = req.params;
+    try{
+        if(req.body != null){
+            const pool = await getConnection();
+            const { NOMBRECLIENTE, DIRECCION, TELEFONO} = req.body;
+            
+
+            const user  = await pool.request().input('id', id).query(queries.getClienteId)
+            
+            if(user.recordset[0] != null){ 
+            
+                // Verificar si al menos un campo está presente en la solicitud
+                const updateFields = {};
+                NOMBRECLIENTE ? updateFields.NOMBRECLIENTE = NOMBRECLIENTE : updateFields.NOMBRECLIENTE = null;
+                DIRECCION ? updateFields.DIRECCION = DIRECCION : updateFields.DIRECCION = null;
+                TELEFONO ? updateFields.TELEFONO = TELEFONO : updateFields.TELEFONO = null;
+                id ? updateFields.CODCLIENTE = id : updateFields.CODCLIENTE = null;
+
+                if(Object.keys(updateFields).length > 0){
+                    const request = await pool.request()
+                        .input('CODCLIENTE', updateFields.CODCLIENTE) // Pasar el ID como parámetro para identificar el perfil a editar
+                        .input('NOMBRECLIENTE', updateFields.NOMBRECLIENTE)
+                        .input('DIRECCION', updateFields.DIRECCION)
+                        .input('TELEFONO', updateFields.TELEFONO)
+
+
+                    const result = await request.execute(queries.updateCliente);
+                    res.status(201).send({data: "OK", message: "Usuario modificado correctamente"});
+                                  
+                } else {
+                    // Si ningún campo está presente en la solicitud, devolver un mensaje de error
+                    res.status(400).json({ errorMessage: "Debe proporcionar al menos un campo para actualizar el perfil" });
+                }
+            }   
+            else{
+                res.status(404).send({errorMessage: "USER_TO_MODIFY_NOT_FOUND"});
+            }
+        }
+        else {
+            res.status(400);
+            res.send({error: "INVALID_INPUT_FIELDS"})
+        }
+        
+        
+    }
+    catch (e) {
+        console.log({error: e.message});
+        res.status(500)
+        res.send({error: e.message})
+    }
+
+    return
 }
