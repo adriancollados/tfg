@@ -75,11 +75,8 @@ export const login = async (req, res) => {
         console.log(EMAIL + '/' + PASS)
         if (EMAIL && PASS) {
             const user = await pool.request().input('EMAIL', EMAIL).query(queries.getClienteLogin)
-            if (user) {
-                const obj = {
-                    codcliente: user.recordset[0].codcliente,
-                    nombrecliente: user.recordset[0].nombrecliente
-                  };
+            if (user && user.recordset[0].fechabaja == null) {
+
                 const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
                 if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
                     const token = getTokenFromUser(user.recordset[0])
@@ -88,7 +85,7 @@ export const login = async (req, res) => {
                     res.status(404).send({errorMessage: "WRONG_PASSWORD"});
                 }
             } else {
-                res.status(404).send({errorMessage: "NOT_FOUND"});
+                res.status(404).send({errorMessage: "USER_NOT_FOUND"});
             }
         } else {
             res.status(400);
@@ -124,7 +121,6 @@ export const editarPerfil = async (req, res) => {
         if(req.body != null){
             const pool = await getConnection();
             const { NOMBRECLIENTE, DIRECCION, TELEFONO} = req.body;
-            
 
             const user  = await pool.request().input('id', id).query(queries.getClienteId)
             
@@ -146,7 +142,8 @@ export const editarPerfil = async (req, res) => {
 
 
                     const result = await request.execute(queries.updateCliente);
-                    res.status(201).send({data: "OK", message: "Usuario modificado correctamente"});
+                    if(result)
+                        res.status(201).send({data: "OK", message: "Usuario modificado correctamente"});
                                   
                 } else {
                     // Si ningún campo está presente en la solicitud, devolver un mensaje de error

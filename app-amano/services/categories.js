@@ -12,10 +12,8 @@ const fetchCategorias = async () => {
     try {
       const response = await fetch(url_base + '/categorias', options);
       if(response.status === 200) {
-        console.log(response.json());
         const categories = await response.json();
-        console.log(categories)
-        return response.json();
+        return categories;
       }
     } catch (error) {
       throw new Error(error.message)

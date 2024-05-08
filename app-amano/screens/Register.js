@@ -24,7 +24,6 @@ const Registerscreen = ({navigation}) => {
     const handleChange = (name, value) => setClient({ ...client, [name]: value})
     
     const handleSubmit = () => {
-        console.log(client)
         const options = {
             method: 'POST',
             headers: {

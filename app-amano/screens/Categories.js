@@ -34,7 +34,7 @@ const Categories = ({ onPressCategoria }) => {
         <FlatList
           data={categorias}
           renderItem={renderCategoriaItem}
-          keyExtractor={(item) => item.NUMDPTO.toString()}
+          keyExtractor={(item) => item.CODDEPARTAMENTO.toString()}
         />
       )}
     </View>

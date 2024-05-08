@@ -160,7 +160,7 @@ router.get('/clientes/perfil/:id', isAuthenticated, clienteController.getCliente
  *         description: Error interno del servidor
  */
 router.put('/clientes/perfil/:id', [
-    body('TELEFONO').optional().isInt().withMessage("TELEFONO debe ser un número entero"),
+    body('TELEFONO').optional().isInt().withMessage("TELEFONO debe ser un número entero")
 ], isAuthenticated, clienteController.editarPerfil);
 
 

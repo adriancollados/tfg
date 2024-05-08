@@ -17,7 +17,7 @@ export const queries = {
 
 	addCliente: 'insert into clientes(CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO, EMAIL, PASS, FECHAALTA) values(@CODCLIENTE, @NOMBRECLIENTE, @CIF, @DIRECCION1, @CODPOSTAL, @POBLACION, @PROVINCIA, @TELEFONO, @EMAIL, @PASS, GETUTCDATE())',
 	getLastIdCLiente: 'select top 1 CODCLIENTE from clientes order by 1 desc',
-	getClienteLogin: 'select codcliente, nombrecliente, pass from clientes where EMAIL = @EMAIL',
+	getClienteLogin: 'select codcliente, nombrecliente, pass, fechabaja from clientes where EMAIL = @EMAIL',
 	updateCliente: 'ActualizarCliente',//'UPDATE CLIENTES WITH(UPDLOCK) SET NOMBRECLIENTE = @NOMBRECLIENTE, DIRECCION = @DIRECCION, TELEFONO = @TELEFONO WHERE CODCLIENTE = @CODCLIENTE',
 
 

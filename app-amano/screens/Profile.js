@@ -8,22 +8,23 @@ import { ScrollView } from 'react-native-web';
 const Profile = () => {
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState(null);
-
+  const [reloadUserData, setReloadUserData] = useState(false);
   const userId = localStorage.getItem('user');
 
   useEffect(() => {
     console.log(userId);
     obtenerUsuario(userId)
       .then((data) => {
-        console.log(data)
-        setUsuario(data);
-
+        setUsuario(data); 
       })
       .catch((error) => {
         setError(error);
       });
-  }, [userId]);
+  }, [userId, reloadUserData]);
 
+  const handleUpdateUserData =() => {
+    setReloadUserData(true)
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -35,7 +36,7 @@ const Profile = () => {
       </View>
       
 
-      <Desplegable titulo="Datos personales" children={usuario}></Desplegable>
+      <Desplegable titulo="Datos personales" children={usuario} onUpdateUserData={handleUpdateUserData}></Desplegable>
       <Desplegable titulo="Historial de pedidos"></Desplegable>
       <Desplegable titulo="Mis puntos"></Desplegable>
     </ScrollView>

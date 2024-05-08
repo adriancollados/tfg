@@ -2,12 +2,13 @@ import React, {useState} from 'react'
 import {SafeAreaView, ScrollView, Image, StatusBar, TextInput, StyleSheet, TouchableOpacity, Text, KeyboardAvoidingView, View} from 'react-native'
 import base64 from 'react-native-base64';
 import { login } from '../services/auth';
+import swal from 'sweetalert2';
 
 
 const Loginscreen = ({navigation}) => {
 
     const [user, setUser] = useState({
-      e_mail: '',
+      email: '',
       pass: ''
     })
     const [errorMessage, setErrorMessage] = useState(null); 
@@ -18,7 +19,7 @@ const Loginscreen = ({navigation}) => {
     const goLogin = () => {
       const strongRegex = new RegExp("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$");
       var encoded;
-      if (!strongRegex.test(user.e_mail)) {
+      if (!strongRegex.test(user.email)) {
         setErrorMessage("El correo electrónico no tiene formato válido")
         setTimeout(() => {
           setErrorMessage(null);
@@ -31,17 +32,30 @@ const Loginscreen = ({navigation}) => {
         .then((data) => {
           localStorage.setItem('user', data.codcliente);
           localStorage.setItem('token', data.token);
+          swal.fire({
+            icon: 'success',
+            title: "¡Login correcto!",
+            showConfirmButton: false,
+            timer: 3000
+        });
           navigation.navigate('Tabs');
         })
           .catch((error) => {
             console.log(error)
+            
             setMessage_err(true)
-            if(message_err){
+            swal.fire({
+              icon: 'error',
+              title: "Contraseña o email incorrectos",
+              timer: 3000
+            });
+            /*if(message_err){
+              
               setErrorMessage("Contraseña o email incorrectos")
               setTimeout(() => {
                 setErrorMessage(null);
             }, 3000);//Desaparece el mensaje despues de 3 segundos
-            }
+            }*/
           })
         
         
@@ -69,10 +83,9 @@ const Loginscreen = ({navigation}) => {
             placeholder="Email"
             keyboardType="email-address"
             autoCapitalize='none'
-            onChangeText={(text) => handleChange('e_mail', text)}
+            onChangeText={(text) => handleChange('email', text)}
           />
           {/* Renderizar el mensaje de error si hay uno */}
-          {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
           <TextInput
             style={styles.input}
             secureTextEntry={true}
@@ -82,7 +95,6 @@ const Loginscreen = ({navigation}) => {
           <TouchableOpacity style={styles.button} onPress={goLogin}>
             <Text style={styles.buttonText}>Accede a tu cuenta</Text>
           </TouchableOpacity>  
-          {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
           <TouchableOpacity onPress={() => navigation.navigate("ForgetPassword")}>
             <Text style={styles.link}> ¿Ha olvidado su contraseña? </Text>
           </TouchableOpacity>
