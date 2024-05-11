@@ -23,6 +23,7 @@ export const queries = {
 
 	//Despartamentos(categorias)
 	getSeccionesFromCategoriaID: 'select CODDEPARTAMENTO, DESCRIPCION from DEPARTAMENTO with(nolock) where DEP_PADRE = @id',
+	getAllCategorias: 'select CODDEPARTAMENTO, DESCRIPCION, DEP_PADRE from DEPARTAMENTO with(nolock)', 
 	
 	
 

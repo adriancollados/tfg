@@ -78,6 +78,11 @@ const Registerscreen = ({navigation}) => {
         <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Guardar</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <Text style={styles.link}>¿Ya tienes cuenta? Accede aquí.</Text>
+
+          </TouchableOpacity>
         
       </KeyboardAvoidingView>   
     </ScrollView>

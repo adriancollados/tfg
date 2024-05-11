@@ -5,8 +5,7 @@ import { login } from '../services/auth';
 import swal from 'sweetalert2';
 
 
-const Loginscreen = ({navigation}) => {
-
+const Loginscreen = ({navigation, onLogin}) => {
     const [user, setUser] = useState({
       email: '',
       pass: ''
@@ -32,13 +31,15 @@ const Loginscreen = ({navigation}) => {
         .then((data) => {
           localStorage.setItem('user', data.codcliente);
           localStorage.setItem('token', data.token);
+          sessionStorage.setItem('user', data.codcliente);
+          sessionStorage.setItem('token', data.token);
           swal.fire({
             icon: 'success',
             title: "¡Login correcto!",
             showConfirmButton: false,
             timer: 3000
-        });
-          navigation.navigate('Tabs');
+          });
+          onLogin();
         })
           .catch((error) => {
             console.log(error)

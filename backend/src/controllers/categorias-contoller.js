@@ -5,7 +5,7 @@ const articuloController = require("../controllers/articulos-controllers");
 export const getAllCategorias = async (req, res) => {
   try {
     const pool = await getConnection();
-    const result = await pool.request().input('ID', 0).query(queries.getSeccionesFromCategoriaID);
+    const result = await pool.request().query(queries.getAllCategorias);
     if(result != null) {
       res.status(200).send(result.recordset)
     } else {

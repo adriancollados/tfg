@@ -1,57 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet,} from 'react-native';
-import React from 'react'
-import {NavigationContainer} from '@react-navigation/native'
-import {createStackNavigator} from '@react-navigation/stack'
-import Homescreen from './screens/HomeScreen';
-import Loginscreen from './screens/Login';
-import Registerscreen from './screens/Register';
-import Tabs from './navigation/TabNavigator';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Icon } from 'react-native-elements'
+import { TouchableOpacity } from 'react-native-web'
 
-const Stack = createStackNavigator() //me permite definir rutas
 
+import {AuthStack, MainTabNavigator} from './navigation/NavigationManager';
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+       // Lógica para comprobar si el usuario está logueado
+      if(localStorage.getItem('user') != undefined){
+          setIsLoggedIn(true);
+      }
+      else{
+          setIsLoggedIn(false);
+      }
+  }, [isLoggedIn])
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  }
+
+
   return (
-    <NavigationContainer> 
-      <Stack.Navigator>
-        <Stack.Screen name="Homescreen" component={Homescreen}
-          options={({ navigation }) => ({
-          title: " ",
-          headerStyle: {
-            backgroundColor: "#C00A21",
-          },
-          })}/>
-          <Stack.Screen name="Login" component={Loginscreen}
-          options={({ navigation }) => ({
-          title: " ",
-          headerStyle: {
-            backgroundColor: "#C00A21",
-          },
-          })}/>
-          <Stack.Screen name="Register" component={Registerscreen}
-          options={({ navigation }) => ({
-          title: " ",
-          headerStyle: {
-            backgroundColor: "#C00A21",
-          },
-          headerTitleStyle: {
-            color: "#C00A21",
-          },
-          })}/>
-          <Stack.Screen name='Tabs' component={Tabs}
-          options={({ navigation }) => ({
-            title: "AMANO",
-            headerStyle: {
-              backgroundColor: "#C00A21",
-            },
-            headerTitleStyle: {
-              color: "#fff",
-            },
-            })}/>
-      </Stack.Navigator>
+    <NavigationContainer>
+        {isLoggedIn ? <MainTabNavigator /> : <AuthStack onLogin={handleLogin}/>}
     </NavigationContainer>
-  );
+  )
 }
 
 const styles = StyleSheet.create({

@@ -9,7 +9,8 @@ const CustomButton = ({children, onPress}) =>(
             top: -30,
             justifyContent: 'center',
             alignItems: 'center',
-            ... styles.shadow
+            ... styles.shadow,
+            ... styles.circle
         }}
         onPress={onPress}
     >
@@ -30,14 +31,14 @@ export default CustomButton
 
 const styles = StyleSheet.create({
     shadow: {
-        shadowColor: '#7F5DF0',
+        shadowColor: '#ffffff',
         shadowOffset: {
-            width: '0',
-            height: '10',
+            width: 0,
+            height: 10,
         },
-        shadowOpacity: 0.25,
-        shadowRadius: '3.5',
-        elevation: 5
+        shadowOpacity: 0.53,
+        shadowRadius: 2.62,
+        elevation: 10,
     },
     circle: {
         width: 70,
