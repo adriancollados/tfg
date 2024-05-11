@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchCategorias } from '../services/categories';
 import { MaterialIcons } from '@expo/vector-icons'; // Importa el icono de MaterialIcons
 
-const CategoriaItem = ({ categoria, onPress, tieneSubcategorias }) => {
+const CategoriaItem = ({ categoria, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.categoriaItem}>
       <Text >{categoria.DESCRIPCION} </Text>
@@ -48,7 +48,7 @@ const Categories = ({navigation}) => {
       
       const tieneSubcategorias = categorias.some(subcategoria => subcategoria.DEP_PADRE === codigoDepartamento);
       if(!tieneSubcategorias){
-        return navigation.navigate("Catalogo")
+        return navigation.navigate("Catalogo", codigoDepartamento= codigoDepartamento)
       }
     };
 
@@ -57,13 +57,12 @@ const Categories = ({navigation}) => {
   const renderSubcategorias = (codigoDepartamento) => {
     const subcategorias = categorias.filter(subcategoria => subcategoria.DEP_PADRE === codigoDepartamento);
     return subcategorias.map(subcategoria => (
-      <SubcategoriaItem key={subcategoria.CODDEPARTAMENTO} subcategoria={subcategoria} onPress={() => navigation.navigate("Catalogo")} style={styles.subcategoriaItem}/>
+      <SubcategoriaItem key={subcategoria.CODDEPARTAMENTO} subcategoria={subcategoria} onPress={() => navigation.navigate("Catalogo", codigoDepartamento = subcategoria.CODDEPARTAMENTO)} style={styles.subcategoriaItem}/>
     ));
   };
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-
       {categorias.filter(categoria => categoria.DEP_PADRE === 0).map(categoria => (
         <View key={categoria.CODDEPARTAMENTO} style={styles.categoriaContainer}>
           <CategoriaItem

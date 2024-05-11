@@ -4,6 +4,7 @@ export const getArticulos = async (req, res) => {
    try{
     const pool = await getConnection();
     const result = await pool.request().query(queries.getAllProducts)
+    console.log(result.recordset);
     res.json( result.recordset)
    }catch(e){
     res.status(500)

@@ -63,7 +63,7 @@ const CatalogoSeccionesStack = () => {
             headerTitleStyle: { color: '#FFFFFF' },
         })}>
             <Stack.Screen name="Secciones" component={Categories} options={({ navigation })}/>
-            <Stack.Screen name="Catalogo" component={Catalogo} options={({ navigation })}/>
+            <Stack.Screen name="Catalogo" component={Catalogo} options={({ navigation  })}/>
         </Stack.Navigator>
     )
 }

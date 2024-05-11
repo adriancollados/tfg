@@ -1,6 +1,6 @@
 export const queries = {
 	//articulos
-    getAllProducts: 'select * from ARTICULOS with(nolock)',
+    getAllProducts: 'SELECT A.*, P.PVPNETO FROM ARTICULOS A INNER JOIN (SELECT DISTINCT(CODARTICULO), PVPNETO FROM PRECIOARTICULO P WHERE FECHAMODIFICACION = ( SELECT MAX(FECHAMODIFICACION) FROM PRECIOARTICULO WHERE CODARTICULO = P.CODARTICULO)) P ON A.CODARTICULO = P.CODARTICULO;',
     getArticuloId: 'select * from ARTICULOS with(nolock) where codarticulo = @id',
 	getStockArticuloID: 'select stock from STOCKS with(nolock) where codarticulo = @id' ,
 	getArticulosFromSeccion: 'select articulos.CODARTICULO, articulos.DESCRIPCION, articulos.UNIDADMEDIDA, articulos.CODDEPARTAMENTO, articulos.DEP_PADRE, ARTICULOS.IMAGEN from ARTICULOS with(nolock) inner join stocks with(nolock) on STOCK > 0 and STOCKS.CODARTICULO = articulos.CODARTICULO where articulos.CODDEPARTAMENTO = @id',
