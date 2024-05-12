@@ -6,6 +6,19 @@ const { getTokenFromUser } = require('../utils/auth');
 
 const IVKey = "68576D5A7134743777217A25432A462D";
 
+const mapearEstadoPedido = (estado) => {
+    switch (estado) {
+        case 0:
+            return "Pagado";
+        case 1:
+            return "En reparto";
+        case 2:
+            return "Entregado";
+        default:
+            return "Desconocido";
+    }
+};
+
 export const getCliente = async (req, res) => {
     try {
         const id = req.params.id;
@@ -167,5 +180,61 @@ export const editarPerfil = async (req, res) => {
         res.send({error: e.message})
     }
 
-    return
+    return res
+}
+
+
+export const verPedidos = async (req, res) => {
+    const {id} = req.params;
+    try{
+        
+        const pool = await getConnection();
+
+        const result  = await pool.request().input('CODCLIENTE', id).query(queries.getPedidosCliente)
+       if(result != null){
+            const pedidos = result.recordset.map(pedido => {
+                pedido.STATUS_PEDIDO = mapearEstadoPedido(pedido.STATUS_PEDIDO);
+                return pedido;
+            });
+            res.status(200).json(pedidos);
+       }
+       else{
+        res.status(404).send({errorMessage: "NOT_FOUND"});
+       }
+
+    }
+    catch (e) {
+        console.log({error: e.message});
+        res.status(500)
+        res.send({error: e.message})
+    }
+    return res
+}
+
+export const detallesPedidos = async (req, res) => {
+    const {id, pedido} = req.params;
+    try{
+        
+        const pool = await getConnection();
+        const resultPed  = await pool.request().input('CODCLIENTE', id).query(queries.getPedidosCliente)
+        if(resultPed != null){
+            const resultDet  = await pool.request().input('CODPEDIDO', pedido).query(queries.getPedidoDetails)
+            if(resultDet != null){
+                console.log(resultDet)
+                res.status(200).send(resultDet.recordset)
+            }
+            else{
+                res.status(404).send({errorMessage: "NOT_FOUND"});
+            }
+        }
+        else{
+            res.status(404).send({errorMessage: "NOT_FOUND"});
+        }
+    }
+    catch (e) {
+        console.log({error: e.message});
+        res.status(500)
+        res.send({error: e.message})
+    }
+    return res
 }

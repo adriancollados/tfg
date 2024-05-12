@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; // Importa el icono de MaterialIcons
 import swal from 'sweetalert2';
 import { updateProfileUser } from '../services/users';
+import { ScrollView } from 'react-native-web';
+import ListaPedidos from './PedidosList'
 
 
 export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
@@ -132,15 +134,12 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
         <View style={styles.contenido}>
           {esDatosPersonales }
           {esHistorialPedidos && (
-            <View>
-              {/* Mostrar historial de pedidos */}
-              <Text>Historial de pedidos...</Text>
-            </View>
+            <ListaPedidos />
           )}
           {esMisPuntos && (
             <View>
               {/* Mostrar puntos del usuario */}
-              <Text>{`Tienes un total de: ${children} puntos`}</Text>
+              <Text>{`Tienes un total de: ${children.PUNTOSCLIENTE} puntos`}</Text>
             </View>
           )}
         </View>

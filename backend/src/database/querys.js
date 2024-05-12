@@ -1,7 +1,7 @@
 export const queries = {
 	//articulos
-    getAllProducts: 'SELECT A.*, P.PVPNETO FROM ARTICULOS A INNER JOIN (SELECT DISTINCT(CODARTICULO), PVPNETO FROM PRECIOARTICULO P WHERE FECHAMODIFICACION = ( SELECT MAX(FECHAMODIFICACION) FROM PRECIOARTICULO WHERE CODARTICULO = P.CODARTICULO)) P ON A.CODARTICULO = P.CODARTICULO;',
-    getArticuloId: 'select * from ARTICULOS with(nolock) where codarticulo = @id',
+    getAllProducts: 'SELECT A.*, P.PVPNETO FROM ARTICULOS A INNER JOIN (SELECT CODARTICULO, PVPNETO FROM (SELECT CODARTICULO, PVPNETO, ROW_NUMBER() OVER (PARTITION BY CODARTICULO ORDER BY FECHAMODIFICACION DESC) AS rn FROM PRECIOARTICULO ) AS ranked WHERE rn = 1) P ON A.CODARTICULO = P.CODARTICULO;',
+	getArticuloId: 'select * from ARTICULOS with(nolock) where codarticulo = @id',
 	getStockArticuloID: 'select stock from STOCKS with(nolock) where codarticulo = @id' ,
 	getArticulosFromSeccion: 'select articulos.CODARTICULO, articulos.DESCRIPCION, articulos.UNIDADMEDIDA, articulos.CODDEPARTAMENTO, articulos.DEP_PADRE, ARTICULOS.IMAGEN from ARTICULOS with(nolock) inner join stocks with(nolock) on STOCK > 0 and STOCKS.CODARTICULO = articulos.CODARTICULO where articulos.CODDEPARTAMENTO = @id',
 	//getArticulosFromCategoria: ' select distinct(articulos.CODARTICULO), articulos.DESCRIPCION, articulos.UNIDADMEDIDA, articulos.DPTO, articulos.VERSION, articulos.seccion  from SUPERAMANO1..articulos with(nolock) inner join stocks with(nolock) on CODALMACEN = \'A3\' and STOCK > 0 where articulos.VISIBLEWEB = \'T\' and articulos.DPTO = @id',
@@ -12,13 +12,15 @@ export const queries = {
 
 	//clientes
 	getAllClientes: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO, EMAIL from CLIENTES with(nolock)',
-	getClienteId: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO, EMAIL from CLIENTES with(nolock) where codcliente = @id',
+	getClienteId: 'select CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO, EMAIL, PUNTOSCLIENTE from CLIENTES with(nolock) where codcliente = @id',
 	spClientes: 'PR_CLIENTES_INSERT',
 
 	addCliente: 'insert into clientes(CODCLIENTE, NOMBRECLIENTE, CIF, DIRECCION, CODPOSTAL, POBLACION, PROVINCIA, TELEFONO, EMAIL, PASS, FECHAALTA) values(@CODCLIENTE, @NOMBRECLIENTE, @CIF, @DIRECCION1, @CODPOSTAL, @POBLACION, @PROVINCIA, @TELEFONO, @EMAIL, @PASS, GETUTCDATE())',
 	getLastIdCLiente: 'select top 1 CODCLIENTE from clientes order by 1 desc',
 	getClienteLogin: 'select codcliente, nombrecliente, pass, fechabaja from clientes where EMAIL = @EMAIL',
 	updateCliente: 'ActualizarCliente',//'UPDATE CLIENTES WITH(UPDLOCK) SET NOMBRECLIENTE = @NOMBRECLIENTE, DIRECCION = @DIRECCION, TELEFONO = @TELEFONO WHERE CODCLIENTE = @CODCLIENTE',
+	getPedidosCliente: 'SELECT CODPEDIDO, FECHAPEDIDO, PVPTOTAL, STATUS_PEDIDO FROM PEDIDOS WITH(NOLOCK) WHERE CODCLIENTE = @CODCLIENTE',
+	getPedidoDetails: 'SELECT DESCRIPCION, CANTIDAD, PVP, COMENTARIO FROM LINPED WITH(NOLOCK) WHERE CODPEDIDO = @CODPEDIDO',
 
 
 	//Despartamentos(categorias)

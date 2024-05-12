@@ -48,16 +48,26 @@ const Categories = ({navigation}) => {
       
       const tieneSubcategorias = categorias.some(subcategoria => subcategoria.DEP_PADRE === codigoDepartamento);
       if(!tieneSubcategorias){
-        return navigation.navigate("Catalogo", codigoDepartamento= codigoDepartamento)
+        console.log('codigo', codigoDepartamento);
+        const cod_padre = 0
+        return navigation.navigate("Catalogo", {codigoDepartamento, cod_padre})
       }
     };
 
+    const handleCategoriaPress = (codigoDepartamento, cod_padre) => {
+      navigation.navigate('Catalogo', { codigoDepartamento, cod_padre });
+    };
   
 
   const renderSubcategorias = (codigoDepartamento) => {
-    const subcategorias = categorias.filter(subcategoria => subcategoria.DEP_PADRE === codigoDepartamento);
-    return subcategorias.map(subcategoria => (
-      <SubcategoriaItem key={subcategoria.CODDEPARTAMENTO} subcategoria={subcategoria} onPress={() => navigation.navigate("Catalogo", codigoDepartamento = subcategoria.CODDEPARTAMENTO)} style={styles.subcategoriaItem}/>
+    // Filtramos las subcategorías sin modificar los objetos originales
+    const subcategoriasFiltradas = categorias.filter(subcategoria => subcategoria.DEP_PADRE === codigoDepartamento);
+
+    // Creamos nuevos objetos para cada subcategoría sin modificar los objetos originales
+    const subcategoriasRenderizadas = subcategoriasFiltradas.map(subcategoria => ({ ...subcategoria }));
+
+    return subcategoriasRenderizadas.map(subcategoria => (
+      <SubcategoriaItem key={subcategoria.CODDEPARTAMENTO} subcategoria={subcategoria} onPress={() => handleCategoriaPress(subcategoria.CODDEPARTAMENTO, codigoDepartamento)} style={styles.subcategoriaItem}/>
     ));
   };
 

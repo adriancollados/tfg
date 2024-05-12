@@ -37,8 +37,8 @@ const Profile = () => {
       
 
       <Desplegable titulo="Datos personales" children={usuario} onUpdateUserData={handleUpdateUserData}></Desplegable>
-      <Desplegable titulo="Historial de pedidos"></Desplegable>
-      <Desplegable titulo="Mis puntos"></Desplegable>
+      <Desplegable titulo="Historial de pedidos" children={usuario}></Desplegable>
+      <Desplegable titulo="Mis puntos" children={usuario}></Desplegable>
     </ScrollView>
     
   );

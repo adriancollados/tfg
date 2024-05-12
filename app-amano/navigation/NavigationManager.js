@@ -11,11 +11,12 @@ import Loginscreen from '../screens/Login';
 import Registerscreen from '../screens/Register';
 import CustomButton from '../screens/CustomButton'
 import ItemsFavs from '../screens/ItemsFavs'
-import Catalogo from '../screens/Catalogo'
+import Catalogo from '../screens/ArticlesList'
 import Initial from '../screens/Initial'
 import Categories from '../screens/Categories'
 import Profile from '../screens/Profile'
 import Carrito from '../screens/Carrito'
+import DetallesArticulo from '../screens/ArticleDetails';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -64,6 +65,8 @@ const CatalogoSeccionesStack = () => {
         })}>
             <Stack.Screen name="Secciones" component={Categories} options={({ navigation })}/>
             <Stack.Screen name="Catalogo" component={Catalogo} options={({ navigation  })}/>
+            <Stack.Screen name="DetallesArticulo" component={DetallesArticulo} options={{navigation}}/>
+
         </Stack.Navigator>
     )
 }

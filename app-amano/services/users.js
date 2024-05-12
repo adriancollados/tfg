@@ -46,5 +46,49 @@ const updateProfileUser = async (datos) => {
     }
 }
 
+const obtenerPedidosCliente = async () => {
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
+  const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    };
+    try {
+      const data = await fetch(`${url_base}/clientes/perfil/${user}/pedidos`, options);
+      if(data.status === 200) {
+          return data.json(); // Parsea la respuesta JSON
+      } else {
+          return await data.json(); // Parsea el error JSON
+      }
+    } catch (error) {
+      throw new Error(error.message)
+    }
+}
 
-  export {obtenerUsuario, updateProfileUser};
+const obtenerDetallesPedidosCliente = async (codpedido) => {
+  const token = localStorage.getItem('token');
+  const user = localStorage.getItem('user');
+  const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+    };
+    try {
+      const data = await fetch(`${url_base}/clientes/perfil/${user}/pedidos/${codpedido}`, options);
+      if(data.status === 200) {
+          return data.json(); // Parsea la respuesta JSON
+      } else {
+          return await data.json(); // Parsea el error JSON
+      }
+    } catch (error) {
+      throw new Error(error.message)
+    }
+}
+
+
+  export {obtenerUsuario, updateProfileUser, obtenerPedidosCliente, obtenerDetallesPedidosCliente};

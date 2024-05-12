@@ -163,6 +163,63 @@ router.put('/clientes/perfil/:id', [
     body('TELEFONO').optional().isInt().withMessage("TELEFONO debe ser un número entero")
 ], isAuthenticated, clienteController.editarPerfil);
 
+/**
+ * @swagger
+ * /clientes/perfil/{id}/pedidos:
+ *   get:
+ *     summary: Ver pedidos del cliente
+ *     tags: 
+ *       - clientes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del cliente
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Lista de pedidos obtenida correctamente
+ *       '401':
+ *         description: No autorizado
+ *       '404':
+ *         description: Pedidos no encontradoss
+ *       '500':
+ *         description: Error interno del servidor
+ */
+router.get('/clientes/perfil/:id/pedidos', isAuthenticated, clienteController.verPedidos);
+
+/**
+ * @swagger
+ * /clientes/perfil/{id}/pedidos/{pedido}:
+ *   get:
+ *     summary: Detalles de un pedido específico del cliente
+ *     tags: 
+ *       - clientes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del cliente
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: pedido
+ *         required: true
+ *         description: ID del pedido
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Detalles del pedido obtenidos correctamente
+ *       '401':
+ *         description: No autorizado
+ *       '404':
+ *         description: Detalles o pedido no encontrado
+ *       '500':
+ *         description: Error interno del servidor
+ */
+router.get('/clientes/perfil/:id/pedidos/:pedido', isAuthenticated, clienteController.detallesPedidos);
 
 
 module.exports = router;
