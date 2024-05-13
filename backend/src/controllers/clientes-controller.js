@@ -220,7 +220,6 @@ export const detallesPedidos = async (req, res) => {
         if(resultPed != null){
             const resultDet  = await pool.request().input('CODPEDIDO', pedido).query(queries.getPedidoDetails)
             if(resultDet != null){
-                console.log(resultDet)
                 res.status(200).send(resultDet.recordset)
             }
             else{

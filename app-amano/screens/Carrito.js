@@ -1,13 +1,47 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { useCarrito } from '../components/CarritoContext';
 
-function CartScreen() {
-  const [items, setItems] = useState(['Item 1', 'Item 2', 'Item 3']);
+function CarritoScreen() {
+  const { carrito, eliminarDelCarrito, incrementarCantidad, reducirCantidad } = useCarrito();
+
+  const RenderImagen = (codigoArticulo) => {
+    try {
+      console.log(codigoArticulo)
+      return (
+        <Image
+          source={require(`../ECOMMERCE/${codigoArticulo}.jpg`)}
+          style={styles.imagen}
+        />
+      );
+    } catch (error) {
+      return <Image uri ={''} style={styles.imagen}/>; // Retorna null si la imagen no puede ser encontrada
+    }
+  };
 
   function renderItem({ item }) {
+    const precioTotal = item.articulo.PVPNETO * item.cantidad;
+
     return (
       <View style={styles.item}>
-        <Text>{item}</Text>
+        {RenderImagen(item.articulo.CODARTICULO)}
+        <View style={styles.detalle}>
+          <Text style={styles.nombre}>{item.articulo.DESCRIPCION}</Text>
+          {item.comentario && <Text style={styles.comentario}>{item.comentario}</Text>}
+          <View style={styles.cantidadContainer}>
+            <TouchableOpacity onPress={() => reducirCantidad(item.cantidad)}>
+              <Text style={styles.cantidadBoton}>-</Text>
+            </TouchableOpacity>
+            <Text style={styles.cantidad}>{item.cantidad}</Text>
+            <TouchableOpacity onPress={() => incrementarCantidad(item.cantidad)}>
+              <Text style={styles.cantidadBoton}>+</Text>
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.precio}>{precioTotal} €</Text>
+          <TouchableOpacity onPress={() => eliminarDelCarrito(item)}>
+            <Text style={{ color: 'red' }}>Eliminar</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -16,13 +50,10 @@ function CartScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Carrito de compras</Text>
       <FlatList
-        data={items}
+        data={carrito}
         renderItem={renderItem}
-        keyExtractor={item => item}
+        keyExtractor={(item, index) => index.toString()}
       />
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Pagar</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -39,21 +70,42 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   item: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  button: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 20,
+  imagen: {
+    width: 100,
+    height: 100,
+    marginRight: 10,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 18,
+  detalle: {
+    flex: 1,
+  },
+  nombre: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  comentario: {
+    marginBottom: 5,
+    fontStyle: 'italic',
+  },
+  cantidadContainer: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  cantidadBoton: {
+    fontSize: 20,
+    marginRight: 5,
+    color: 'blue',
+  },
+  cantidad: {
+    fontSize: 16,
+    marginRight: 5,
+  },
+  precio: {
+    fontWeight: 'bold',
   },
 });
 
-export default CartScreen;
+export default CarritoScreen;

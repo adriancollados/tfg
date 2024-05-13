@@ -17,6 +17,7 @@ import Categories from '../screens/Categories'
 import Profile from '../screens/Profile'
 import Carrito from '../screens/Carrito'
 import DetallesArticulo from '../screens/ArticleDetails';
+import { CarritoProvider } from '../components/CarritoContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -74,68 +75,70 @@ const CatalogoSeccionesStack = () => {
 
 const MainTabNavigator = () => {
     return(
-        <Tab.Navigator screenOptions={({route}) => ({
-            tabBarShowLabel: false,
-            tabBarStyle: {backgroundColor: '#C00A21', height: 60},
-            headerStyle: { backgroundColor: '#C00A21' },
-            headerTitleStyle: { color: '#FFFFFF' },
-            headerTitleAlign: 'center',
-            style:{
-                    position: 'absolute',
-                    elevarion: 0,
-                    height: 60
-                },
-            tabBarLabel: route.name,
-            })}>
-            <Tab.Screen name="Inicio" component={Initial}
-                options={() => ({
-                    tabBarIcon: ({focused}) => (
-                        <MaterialCommunityIcons name="home" color={'#FFFFFF'} size={30}/>
-                    )  
-                })}
-            />
-            <Tab.Screen name="Articulos favoritos" component={ItemsFavs}
-                options={() => ({
-                    tabBarIcon: ({focused}) => (
-                        <MaterialCommunityIcons name="star" color={'#FFFFFF'} size={30}/>
-                    )          
-                })}/>
-            <Tab.Screen name="CatalogoSecciones" component={CatalogoSeccionesStack}
-                options={({navigation}) => ({
-                    tabBarIcon: ({focused}) => (
-                        <Icon
-                            name='menu'
-                            style={{
-                                width: 50,
-                                height: 50,
-                                justifyContent: 'center',
-                            }}
-                            color='#ffffff'
+        <CarritoProvider>
+            <Tab.Navigator screenOptions={({route}) => ({
+                tabBarShowLabel: false,
+                tabBarStyle: {backgroundColor: '#C00A21', height: 60},
+                headerStyle: { backgroundColor: '#C00A21' },
+                headerTitleStyle: { color: '#FFFFFF' },
+                headerTitleAlign: 'center',
+                style:{
+                        position: 'absolute',
+                        elevarion: 0,
+                        height: 60
+                    },
+                tabBarLabel: route.name,
+                })}>
+                <Tab.Screen name="Inicio" component={Initial}
+                    options={() => ({
+                        tabBarIcon: ({focused}) => (
+                            <MaterialCommunityIcons name="home" color={'#FFFFFF'} size={30}/>
+                        )  
+                    })}
+                />
+                <Tab.Screen name="Articulos favoritos" component={ItemsFavs}
+                    options={() => ({
+                        tabBarIcon: ({focused}) => (
+                            <MaterialCommunityIcons name="star" color={'#FFFFFF'} size={30}/>
+                        )          
+                    })}/>
+                <Tab.Screen name="CatalogoSecciones" component={CatalogoSeccionesStack}
+                    options={({navigation}) => ({
+                        tabBarIcon: ({focused}) => (
+                            <Icon
+                                name='menu'
+                                style={{
+                                    width: 50,
+                                    height: 50,
+                                    justifyContent: 'center',
+                                }}
+                                color='#ffffff'
+                            />
+                        ),
+                        tabBarButton: (props) => (
+                            <CustomButton { ...props } />
+                        ),
+                        headerShown: false,
+                    })}/>
+                <Tab.Screen name="Carrito" component={Carrito}
+                    options={{
+                        tabBarIcon: ({focused}) => (
+                            <Icon
+                                type="font-awesome"
+                                name="shopping-cart"
+                                size={24}
+                                color="#ffffff"
                         />
-                    ),
-                    tabBarButton: (props) => (
-                        <CustomButton { ...props } />
-                    ),
-                    headerShown: false,
-                })}/>
-            <Tab.Screen name="Carrito" component={Carrito}
+                        )  
+                    }}/>
+                <Tab.Screen name="Mi perfil" component={Profile}
                 options={{
                     tabBarIcon: ({focused}) => (
-                        <Icon
-                            type="font-awesome"
-                            name="shopping-cart"
-                            size={24}
-                            color="#ffffff"
-                    />
-                    )  
+                    <MaterialCommunityIcons name="account" color={'#FFFFFF'} size={30} />
+                    )
                 }}/>
-            <Tab.Screen name="Mi perfil" component={Profile}
-            options={{
-                tabBarIcon: ({focused}) => (
-                <MaterialCommunityIcons name="account" color={'#FFFFFF'} size={30} />
-                )
-            }}/>
-        </Tab.Navigator>
+            </Tab.Navigator>
+        </CarritoProvider>
     )
 };
 

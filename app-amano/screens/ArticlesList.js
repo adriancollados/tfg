@@ -3,26 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView , ActivityI
 import { useNavigation } from '@react-navigation/native';
 import { fetchArticulos } from '../services/articulos';
 import { useRoute } from '@react-navigation/native';
-
-const ArticuloItem = ({ articulo, onPressArticulo }) => {
-  // Convertir los datos de la imagen a un URI de imagen
-  const uriImagen = `data:image/jpeg;base64,${Buffer.from(articulo.IMAGEN.data).toString('base64')}`;
-
-  return (
-    <TouchableOpacity onPress={onPressArticulo} style={styles.articuloContainer}>
-      <View style={styles.imagenContainer}>
-        <Image source={{ uri: uriImagen }} style={styles.imagen} />
-      </View>
-      <View style={styles.detalleContainer}>
-        <Text style={styles.descripcion}>{articulo.DESCRIPCION}</Text>
-        <Text style={styles.precio}>Precio: ${articulo.PVPNETO}</Text>
-        <TouchableOpacity style={styles.botonAgregar}>
-          <Text style={styles.textoBoton}>Añadir al carrito</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
-};
+import { useCarrito } from '../components/CarritoContext';
 
 const Catalogo = ({navigation}) => {
   const [articulos, setArticulos] = useState([]);
@@ -36,6 +17,7 @@ const Catalogo = ({navigation}) => {
       try {
         const data = await fetchArticulos();
         setArticulos([...data]); 
+        console.log(articulos.length);
       } catch (error) {
         console.error('Error al obtener los articulos:', error);
         setError('Error al obtener las articulos. Inténtalo de nuevo más tarde.');
@@ -47,11 +29,7 @@ const Catalogo = ({navigation}) => {
   }, [codigoDepartamento, cod_padre]);
 
 
-  const arrayBufferToBase64 = (arrayBuffer) => {
-    const bytes = new Uint8Array(arrayBuffer);
-    const binary = bytes.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
-    return btoa(binary);
-  };
+  
 
   const obtenerRelacionados = (articulos) => {
     return articulos.filter(articulo => {
@@ -61,8 +39,19 @@ const Catalogo = ({navigation}) => {
         // Verificar si el código del artículo es igual al código del padre y si el DEP_PADRE es igual al código del departamento
         return articulo.CODDEPARTAMENTO === cod_padre && articulo.DEP_PADRE === codigoDepartamento;
       }})
-  }
-    
+  };
+  const renderImagen = (codigoArticulo) => {
+    try {
+      return (
+        <Image
+          source={require(`../ECOMMERCE/${codigoArticulo}.jpg`)}
+          style={styles.imagen}
+        />
+      );
+    } catch (error) {
+      return <Image uri ={''} style={styles.imagen}/>; // Retorna null si la imagen no puede ser encontrada
+    }
+  };
 
   const onPressArticulo = (articulo, articulos) => {
     const articulosRelacionados = obtenerRelacionados(articulos);
@@ -70,35 +59,57 @@ const Catalogo = ({navigation}) => {
     return navigation.navigate('DetallesArticulo', { articulo,  articulosRelacionados});
   };
 
-  const renderArticulos = (articulos) => {
+  const doesImageExist = (codigoArticulo) => {
+    try {
+      require(`../ECOMMERCE/${codigoArticulo}.jpg`);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
 
+  const { agregarAlCarrito } = useCarrito();
+
+  const handleCarrito = (articulo, comment, quantity) => {
+      agregarAlCarrito(articulo, comment, quantity);
+  };
+
+  
+  const renderArticulos = (articulos) => {
     return articulos.filter(articulo => {
       if (cod_padre === 0) {
-        return articulo.CODDEPARTAMENTO === codigoDepartamento
+        return articulo.CODDEPARTAMENTO === codigoDepartamento;
       } else {
-        // Verificar si el código del artículo es igual al código del padre y si el DEP_PADRE es igual al código del departamento
         return articulo.CODDEPARTAMENTO === cod_padre && articulo.DEP_PADRE === codigoDepartamento;
       }
-    }).map(articulo => (
+    }).map(articulo => {
+      // Verifica si el artículo tiene imagen
+      const tieneImagen = articulo.CODARTICULO && doesImageExist(articulo.CODARTICULO);
+      // Si no tiene imagen, no se muestra el artículo
+      if (!tieneImagen) return null;
+      return (
         <TouchableOpacity onPress={() => onPressArticulo(articulo, articulos)} style={styles.articuloContainer} key={articulo.CODARTICULO}>
           <View style={styles.imagenContainer}>
-            <Image src={{ uri: ''}} style={styles.imagen} />
+            {renderImagen(articulo.CODARTICULO)}
           </View>
           <View style={styles.detalleContainer}>
             <Text style={styles.descripcion}>{articulo.DESCRIPCION}</Text>
             <Text style={styles.precio}>Precio: {articulo.PVPNETO}€</Text>
-            <TouchableOpacity style={styles.botonAgregar}>
+            <TouchableOpacity style={styles.botonAgregar} onPress={() => handleCarrito(articulo, '', 1)}>
               <Text style={styles.textoBoton}>Añadir al carrito</Text>
             </TouchableOpacity>
           </View>
-        </TouchableOpacity>))
-  }
+        </TouchableOpacity>
+      );
+    }).filter(Boolean); // Filtra los elementos nulos
+  };
+  
 
 
   return (
     <View style={styles.contenedorPrincipal}>
-      <ScrollView contentContainerStyle={styles.contenedorArticulos}>
-          {renderArticulos(articulos)}
+      <ScrollView contentContainerStyle={styles.contenedorArticulos} showsVerticalScrollIndicator={false}>
+        {renderArticulos(articulos)}
       </ScrollView>
     </View>
     
@@ -120,7 +131,7 @@ const styles = StyleSheet.create({
   },
   articuloContainer: {
     width: '48%', // Cada artículo ocupa el 48% del contenedor de los artículos para dejar espacio entre ellos
-    marginBottom: '3%', // Espacio entre los artículos
+    marginBottom: '10%', // Espacio entre los artículos
   },
   imagen: {
     width: '100%', // La imagen dentro de cada artículo ocupa el 100% de su contenedor
