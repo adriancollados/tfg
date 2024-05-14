@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import articulo from "./routes/articulosRoutes";
 import cliente from "./routes/clientesRoutes";
 import categorias from "./routes/categoriaRoutes";
+import payments from "./routes/paymentRoutes";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import { options } from "./swaggerOptions";
@@ -24,7 +25,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(articulo);
 app.use(cliente);
-app.use(categorias)
+app.use(categorias);
+app.use(payments);
 
 app.use("/docs", swaggerUI.serve, swaggerUI.setup(specs));
 

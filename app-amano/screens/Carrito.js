@@ -1,59 +1,174 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import React, {useState} from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Button, Modal, TextInput } from 'react-native';
 import { useCarrito } from '../components/CarritoContext';
+import {makePayment} from '../services/payment'
+import base64 from 'react-native-base64';
+import RedsysWebView from '../components/Redsys.Component';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 function CarritoScreen() {
   const { carrito, eliminarDelCarrito, incrementarCantidad, reducirCantidad } = useCarrito();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [nombre, setNombre] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [codigoPostal, setCodigoPostal] = useState('');
+  const [horaEntrega, sethoraEntrega] = useState('');
+  const [showWebView, setShowWebView] = useState(false);
+  const [redsysParams, setRedsysParams] = useState(null);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-  const RenderImagen = (codigoArticulo) => {
+  const calcularTasaTransporte = (subtotal) => {
+    if (subtotal < 20) {
+      return 4.50;
+    } else if (subtotal < 30) {
+      return 3.25;
+    } else if (subtotal < 60) {
+      return 1.50;
+    } else {
+      return 0;
+    }
+  };
+
+  const handlePayment = async () => {
+      setModalVisible(false)
+      // Datos del pedido
+      const pedido = {
+        user: localStorage.getItem('user'),
+        nombre,
+        direccion,
+        codigoPostal,
+        horaEntrega,
+        total,
+        carrito
+      };
+      const encoded = base64.encode(JSON.stringify(pedido))
+      console.log(encoded);
+      console.log(pedido)
+      //makePayment(encoded)
+      setRedsysParams(redsysParams);
+      setShowWebView(true);
+      if (showWebView && redsysParams) {
+        return <RedsysWebView redsysParams={redsysParams} />;
+      }
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    const formattedDate = date.toLocaleString(); // Formatea la fecha seleccionada
+    sethoraEntrega(formattedDate);
+    hideDatePicker();
+  };
+  const totalArticulos = carrito.reduce((total, item) => total + item.cantidad, 0);
+  const subtotal = carrito.reduce((total, item) => total + item.articulo.PVPNETO * item.cantidad, 0);
+  const tasaTransporte = calcularTasaTransporte(subtotal);
+  const total = subtotal + tasaTransporte;
+
+  const RenderImagen = ({ codigoArticulo }) => {
     try {
-      console.log(codigoArticulo)
-      return (
-        <Image
-          source={require(`../ECOMMERCE/${codigoArticulo}.jpg`)}
-          style={styles.imagen}
-        />
-      );
+      const imagen = require(`../ECOMMERCE/${codigoArticulo}.jpg`);
+      return <Image source={imagen} style={styles.itemImage} />;
     } catch (error) {
-      return <Image uri ={''} style={styles.imagen}/>; // Retorna null si la imagen no puede ser encontrada
+      return <Image source={''} style={styles.itemImage} />; // Imagen por defecto
     }
   };
 
   function renderItem({ item }) {
-    const precioTotal = item.articulo.PVPNETO * item.cantidad;
-
     return (
-      <View style={styles.item}>
-        {RenderImagen(item.articulo.CODARTICULO)}
-        <View style={styles.detalle}>
-          <Text style={styles.nombre}>{item.articulo.DESCRIPCION}</Text>
-          {item.comentario && <Text style={styles.comentario}>{item.comentario}</Text>}
-          <View style={styles.cantidadContainer}>
-            <TouchableOpacity onPress={() => reducirCantidad(item.cantidad)}>
+      <View style={styles.itemContainer}>
+        <RenderImagen codigoArticulo={item.articulo.CODARTICULO} />
+        <View style={styles.itemDetails}>
+          <Text style={styles.itemDescription}>{item.articulo.DESCRIPCION}</Text>
+          {item.comentario && <Text style={styles.itemComment}>{item.comentario}</Text>}
+          <View style={styles.itemActions}>
+            <TouchableOpacity onPress={() => reducirCantidad(item)}>
               <Text style={styles.cantidadBoton}>-</Text>
             </TouchableOpacity>
             <Text style={styles.cantidad}>{item.cantidad}</Text>
-            <TouchableOpacity onPress={() => incrementarCantidad(item.cantidad)}>
+            <TouchableOpacity onPress={() => incrementarCantidad(item)}>
               <Text style={styles.cantidadBoton}>+</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.precio}>{precioTotal} €</Text>
+          <Text style={styles.itemPrice}>{(item.articulo.PVPNETO * item.cantidad).toFixed(2)} €</Text>
           <TouchableOpacity onPress={() => eliminarDelCarrito(item)}>
-            <Text style={{ color: 'red' }}>Eliminar</Text>
+            <Text style={styles.removeButton}>Eliminar</Text>
           </TouchableOpacity>
         </View>
       </View>
     );
   }
 
+  
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Carrito de compras</Text>
+      <Text style={styles.title}>Detalles del carrito</Text>
       <FlatList
         data={carrito}
         renderItem={renderItem}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(_, index) => index.toString()}
       />
+      <View style={styles.summaryContainer}>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryText}>{totalArticulos} Artículos</Text>
+          <Text style={styles.summaryText}>{subtotal.toFixed(2)} €</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryText}>Transporte</Text>
+          <Text style={styles.summaryText}>+{tasaTransporte.toFixed(2)} €</Text>
+        </View>
+        <View style={styles.summaryRow}>
+          <Text style={styles.summaryTotal}>Total (Impuestos Inc.)</Text>
+          <Text style={styles.summaryTotal}>{total.toFixed(2)} €</Text>
+        </View>
+        <TouchableOpacity style={styles.checkoutButton} onPress={() => setModalVisible(true)}>
+          <Text style={styles.checkoutButtonText}>Pasar por caja</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Información de Envío</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Nombre"
+              value={nombre}
+              onChangeText={setNombre}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Dirección"
+              value={direccion}
+              onChangeText={setDireccion}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Código Postal"
+              value={codigoPostal}
+              onChangeText={setCodigoPostal}
+              keyboardType="numeric"
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Hora de la entrega"
+                value={horaEntrega}
+                onChangeText={sethoraEntrega}
+                keyboardType="numeric"
+              />
+            <View style={styles.modalActions}>
+              <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+              <Button title="Confirmar" onPress={handlePayment} />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -61,50 +176,139 @@ function CarritoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 10,
+    backgroundColor: '#f8f8f8',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
-  item: {
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 10,
     marginBottom: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
   },
-  imagen: {
-    width: 100,
-    height: 100,
+  itemImage: {
+    width: 80,
+    height: 80,
     marginRight: 10,
+    borderRadius: 5,
   },
-  detalle: {
+  itemDetails: {
     flex: 1,
   },
-  nombre: {
+  itemDescription: {
     fontSize: 16,
-    marginBottom: 5,
+    fontWeight: 'bold',
   },
-  comentario: {
-    marginBottom: 5,
+  itemComment: {
     fontStyle: 'italic',
-  },
-  cantidadContainer: {
-    flexDirection: 'row',
+    color: '#555',
     marginBottom: 5,
+  },
+  itemActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 5,
   },
   cantidadBoton: {
-    fontSize: 20,
-    marginRight: 5,
-    color: 'blue',
+    fontSize: 18,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    textAlign: 'center',
   },
   cantidad: {
     fontSize: 16,
-    marginRight: 5,
+    marginHorizontal: 10,
   },
-  precio: {
+  itemPrice: {
+    fontSize: 16,
     fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 'auto',  // Move to the right
+    textAlign: 'right',
+  },
+  removeButton: {
+    color: 'red',
+    marginTop: 5,
+  },
+  summaryContainer: {
+    padding: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    marginTop: 20,
+  },
+  summaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
+  summaryText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  summaryTotal: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  checkoutButton: {
+    backgroundColor: '#000',
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  checkoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    padding: 20,
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
 });
 
