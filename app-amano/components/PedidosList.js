@@ -20,10 +20,8 @@ const ListaPedidos = ({ }) => {
     
     // Función para manejar la selección de un pedido
     const handleSeleccionPedido = (pedido) => {
-        console.log(pedido.CODPEDIDO)
         obtenerDetallesPedidosCliente(pedido.CODPEDIDO)
             .then((data) => {
-                console.log(data)
                 setDetallesPedidos(data); 
             })
             .catch((error) => {

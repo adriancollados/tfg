@@ -221,5 +221,66 @@ router.get('/clientes/perfil/:id/pedidos', isAuthenticated, clienteController.ve
  */
 router.get('/clientes/perfil/:id/pedidos/:pedido', isAuthenticated, clienteController.detallesPedidos);
 
+/**
+ * @swagger
+ * /clientes/perfil/{id}/favoritos:
+ *   get:
+ *     summary: Articulos favoritos de un cliente
+ *     tags: 
+ *       - clientes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del cliente
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       '200':
+ *         description: Articulos favoritos obtenidos correctamente
+ *       '401':
+ *         description: No autorizado
+ *       '404':
+ *         description: Articulos favoritos no encontrados
+ *       '500':
+ *         description: Error interno del servidor
+ */
+router.get('/clientes/perfil/:id/favoritos', isAuthenticated, clienteController.getFavoritos);
+
+/**
+ * @swagger
+ * /clientes/perfil/{id}/favoritos:
+ *   get:
+ *     summary: Articulos favoritos de un cliente
+ *     tags: 
+ *       - clientes
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del cliente
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               t:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Articulos favoritos obtenidos correctamente
+ *       '401':
+ *         description: No autorizado
+ *       '404':
+ *         description: Articulos favoritos no encontrados
+ *       '500':
+ *         description: Error interno del servidor
+ */
+router.post('/clientes/:id/favoritos', isAuthenticated, clienteController.insertFavoritos);
+
 
 module.exports = router;

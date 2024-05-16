@@ -5,6 +5,8 @@ import { ScrollView, TouchableOpacity } from 'react-native-web';
 import CarouselArticulos  from '../components/ArticulosRelacionados';
 import RenderImagen from '../components/RenderImage';
 import { useCarrito } from '../components/CarritoContext';
+import SuccessModal from '../components/ModalSucces';
+
 const ProductDetails = ({}) => {
     const route = useRoute();
     const [quantity, setQuantity] = useState(1);
@@ -12,10 +14,20 @@ const ProductDetails = ({}) => {
     const articulosRelacionados = route.params.articulosRelacionados;
     const [articuloDetail, setArticuloDetail] = useState(route.params.articulo);
 
+    const [successModalVisible, setSuccessModalVisible] = useState(false);
+
+    const showSuccessModal = () => {
+      setSuccessModalVisible(true);
+      setTimeout(() => {
+        setSuccessModalVisible(false);
+      }, 700);
+    };
+
     const { agregarAlCarrito } = useCarrito();
 
     const handleCarrito = (articulo, comment, quantity) => {
         agregarAlCarrito(articulo, comment, quantity);
+        showSuccessModal()
     };
 
     // Función para actualizar los detalles del artículo actual
@@ -36,6 +48,7 @@ const ProductDetails = ({}) => {
     return (
         <View style={styles.contenedorPrincipal}>
             <ScrollView contentContainerStyle={styles.contenedorArticulos} showsVerticalScrollIndicator={false}>
+                <SuccessModal visible={successModalVisible} onClose={() => setSuccessModalVisible(false)} />
                 <View style={styles.cardContainer}>
                     <RenderImagen codigoArticulo={articuloDetail.CODARTICULO}/> 
                     <View style={styles.descriptionContainer}>
@@ -76,7 +89,11 @@ const ProductDetails = ({}) => {
                         </TouchableOpacity>
                     </View>
                 </View>
-
+                <View style={styles.headerContainer}>
+                    <View style={styles.descriptionContainer}>
+                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Articulos Relacionados</Text>
+                    </View>
+                </View>
                 <ScrollView contentContainerStyle={styles.contenedorArticulos}>
                     <View style={styles.cardContainer}>
                         <CarouselArticulos navigation={navigation} articulosRelacionados={articulosRelacionados} actualizarArticulo={actualizarArticuloActual}/>
@@ -166,7 +183,13 @@ const styles = StyleSheet.create({
     addToCartContainer: {
         alignItems: 'center',
     },
-    });
+    headerContainer: {
+        marginTop: 20,
+        marginBottom: 10,
+        alignItems: 'center',
+        height: 40,
+    }
+});
     
 
 export default ProductDetails;

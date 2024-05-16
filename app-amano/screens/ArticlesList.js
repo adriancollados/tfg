@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView , ActivityIndicator } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { fetchArticulos } from '../services/articulos';
 import { useRoute } from '@react-navigation/native';
 import { useCarrito } from '../components/CarritoContext';
+import SuccessModal from '../components/ModalSucces';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {insertArticulos} from '../services/articulos'
 
 const Catalogo = ({navigation}) => {
   const [articulos, setArticulos] = useState([]);
   const [error, setError] = useState(null);
+  const [favoritos, setFavoritos] = useState([]);
   const route = useRoute();
   const codigoDepartamento = route.params.codigoDepartamento;
   const cod_padre = route.params.cod_padre
@@ -17,7 +20,6 @@ const Catalogo = ({navigation}) => {
       try {
         const data = await fetchArticulos();
         setArticulos([...data]); 
-        console.log(articulos.length);
       } catch (error) {
         console.error('Error al obtener los articulos:', error);
         setError('Error al obtener las articulos. Inténtalo de nuevo más tarde.');
@@ -29,7 +31,25 @@ const Catalogo = ({navigation}) => {
   }, [codigoDepartamento, cod_padre]);
 
 
-  
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+
+  const showSuccessModal = () => {
+    setSuccessModalVisible(true);
+    setTimeout(() => {
+      setSuccessModalVisible(false);
+    }, 700);
+  };
+
+  const toggleFavorito = (articulo) => {
+    if (favoritos.includes(articulo)) {
+      setFavoritos(favoritos.filter((fav) => fav !== articulo));
+    } else {
+      insertArticulos(articulo)
+        .then((data) => {
+        setFavoritos([...favoritos, articulo]);
+      })
+    }
+  };
 
   const obtenerRelacionados = (articulos) => {
     return articulos.filter(articulo => {
@@ -72,6 +92,7 @@ const Catalogo = ({navigation}) => {
 
   const handleCarrito = (articulo, comment, quantity) => {
       agregarAlCarrito(articulo, comment, quantity);
+      showSuccessModal()
   };
 
   
@@ -95,6 +116,9 @@ const Catalogo = ({navigation}) => {
           <View style={styles.detalleContainer}>
             <Text style={styles.descripcion}>{articulo.DESCRIPCION}</Text>
             <Text style={styles.precio}>Precio: {articulo.PVPNETO}€</Text>
+            <TouchableOpacity onPress={() => toggleFavorito(articulo)} style={styles.estrellaContainer}>
+              <Icon name={favoritos.includes(articulo.CODARTICULO) ? 'star' : 'star-outline'} size={24} color={favoritos.includes(articulo) ? '#FFD700' : '#CCCCCC'} />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.botonAgregar} onPress={() => handleCarrito(articulo, '', 1)}>
               <Text style={styles.textoBoton}>Añadir al carrito</Text>
             </TouchableOpacity>
@@ -109,7 +133,9 @@ const Catalogo = ({navigation}) => {
   return (
     <View style={styles.contenedorPrincipal}>
       <ScrollView contentContainerStyle={styles.contenedorArticulos} showsVerticalScrollIndicator={false}>
+        <SuccessModal visible={successModalVisible} onClose={() => setSuccessModalVisible(false)} />
         {renderArticulos(articulos)}
+
       </ScrollView>
     </View>
     

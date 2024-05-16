@@ -18,6 +18,7 @@ import Profile from '../screens/Profile'
 import Carrito from '../screens/Carrito'
 import DetallesArticulo from '../screens/ArticleDetails';
 import { CarritoProvider } from '../components/CarritoContext';
+import { useCarrito } from '../components/CarritoContext';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -73,7 +74,7 @@ const CatalogoSeccionesStack = () => {
 }
 
 
-const MainTabNavigator = () => {
+const MainTabNavigator = ({handleLogout}) => {
     return(
         <CarritoProvider>
             <Tab.Navigator screenOptions={({route}) => ({
@@ -129,14 +130,14 @@ const MainTabNavigator = () => {
                                 size={24}
                                 color="#ffffff"
                         />
-                        )  
+                        )
                     }}/>
-                <Tab.Screen name="Mi perfil" component={Profile}
-                options={{
+                <Tab.Screen name="Mi perfil" component={(props) => <Profile {...props} handleLogout={handleLogout}/>}
+                options={() => ({
                     tabBarIcon: ({focused}) => (
                     <MaterialCommunityIcons name="account" color={'#FFFFFF'} size={30} />
                     )
-                }}/>
+                })}/> 
             </Tab.Navigator>
         </CarritoProvider>
     )

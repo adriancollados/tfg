@@ -25,6 +25,7 @@
     "morgan": "^1.10.0",
     "mssql": "^9.0.1",
     "pretty-format": "^29.5.0",
+    "stripe": "^15.6.0",
     "swagger-jsdoc": "^6.2.5",
     "swagger-ui-express": "^4.6.0"
   },

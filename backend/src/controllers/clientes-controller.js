@@ -4,10 +4,12 @@ import body from 'express-validator';
 const { getTokenFromUser } = require('../utils/auth'); 
 
 
-const IVKey = "68576D5A7134743777217A25432A462D";
+const IVKey = process.env.IVKey
 
 const mapearEstadoPedido = (estado) => {
     switch (estado) {
+        case -1: 
+            return "Fallido"
         case 0:
             return "Pagado";
         case 1:
@@ -225,6 +227,53 @@ export const detallesPedidos = async (req, res) => {
             else{
                 res.status(404).send({errorMessage: "NOT_FOUND"});
             }
+        }
+        else{
+            res.status(404).send({errorMessage: "NOT_FOUND"});
+        }
+    }
+    catch (e) {
+        console.log({error: e.message});
+        res.status(500)
+        res.send({error: e.message})
+    }
+    return res
+}
+
+
+
+export const getFavoritos = async (req, res) => {
+
+    const {id} = req.params;
+    try{
+        
+        const pool = await getConnection();
+        const resultPed  = await pool.request().input('CODCLIENTE', id).execute(queries.sp_GetArticulosFav)
+        if(resultPed != null){
+            
+            res.status(200).send(resultPed.recordset)
+        }
+        else{
+            res.status(404).send({errorMessage: "NOT_FOUND"});
+        }
+    }
+    catch (e) {
+        console.log({error: e.message});
+        res.status(500)
+        res.send({error: e.message})
+    }
+    return res
+}
+
+export const insertFavoritos = async (req, res) => {
+
+    const {id} = req.params;
+    const codigo = req.body.t
+    try{
+        const pool = await getConnection();
+        const resultPed  = await pool.request().input('CODCLIENTE', id).input('CODARTICULO', codigo.CODARTICULO).execute(queries.sp_InserArticulosFavs)
+        if(resultPed != null){
+            res.status(200).send()
         }
         else{
             res.status(404).send({errorMessage: "NOT_FOUND"});

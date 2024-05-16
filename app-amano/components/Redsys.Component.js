@@ -1,20 +1,20 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { WebView } from 'react-native-webview';
+import { Linking } from 'react-native';
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+import CheckoutForm from '../components/CheckoutForm';
 
-const RedsysWebView = ({ redsysParams }) => {
-  const htmlContent = `
-    <html>
-      <body onload="document.forms[0].submit()">
-        <form action="https://sis-t.redsys.es:25443/sis/realizarPago" method="post">
-          <input type="hidden" name="Ds_SignatureVersion" value="${redsysParams.Ds_SignatureVersion}">
-          <input type="hidden" name="Ds_MerchantParameters" value="${redsysParams.Ds_MerchantParameters}">
-          <input type="hidden" name="Ds_Signature" value="${redsysParams.Ds_Signature}">
-        </form>
-      </body>
-    </html>
-  `;
+const stripePromise = loadStripe('pk_test_51PGob9FFZqdYKyWkpKfKyTv4CcsR9CDBMVr4zk6Rne0FHHOd4Dm1SyWsGBmR6OgMHTjIN5NqDNMibrFk8LMPhwF4002MtY1Axh')
 
-  return <WebView originWhitelist={['*']} source={{ html: htmlContent }} />;
+const RedsysWebView = ({ pedido}) => {
+
+  return (
+    <Elements stripe={stripePromise} >
+      <CheckoutForm pedido={pedido}/>
+    </Elements>
+  );
+
 };
 
 export default RedsysWebView;

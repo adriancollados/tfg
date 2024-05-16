@@ -1,21 +1,26 @@
-import React, {useState} from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Button, Modal, TextInput } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Button, Modal, TextInput, Alert } from 'react-native';
 import { useCarrito } from '../components/CarritoContext';
 import {makePayment} from '../services/payment'
 import base64 from 'react-native-base64';
 import RedsysWebView from '../components/Redsys.Component';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import swal from 'sweetalert2';
+import { useRoute } from '@react-navigation/native';
+
 
 function CarritoScreen() {
+  const route = useRoute()
+  const { params } = route;
   const { carrito, eliminarDelCarrito, incrementarCantidad, reducirCantidad } = useCarrito();
   const [modalVisible, setModalVisible] = useState(false);
   const [nombre, setNombre] = useState('');
   const [direccion, setDireccion] = useState('');
   const [codigoPostal, setCodigoPostal] = useState('');
   const [horaEntrega, sethoraEntrega] = useState('');
-  const [showWebView, setShowWebView] = useState(false);
-  const [redsysParams, setRedsysParams] = useState(null);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [showWebView, setShowWebView] = useState(params?.showWebView ?? false);
+  const [pedido, setPedido] = useState('');
+
+ 
 
   const calcularTasaTransporte = (subtotal) => {
     if (subtotal < 20) {
@@ -29,10 +34,28 @@ function CarritoScreen() {
     }
   };
 
+
   const handlePayment = async () => {
       setModalVisible(false)
+
+      if (/^\d+$/.test(codigoPostal) && codigoPostal.length === 5) {
+        setCodigoPostal(codigoPostal);
+      }
+      else {
+        Alert.alert('Error', 'El código postal debe ser numérico y tener una longitud de 5 dígitos.');
+      }
+
+      if (/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(horaEntrega)) {
+        sethoraEntrega(horaEntrega);
+      }
+      else {
+        Alert.alert('Error', 'Por favor ingresa la hora de entrega en formato HH:MM.');
+      }
+
+
+
       // Datos del pedido
-      const pedido = {
+      const aux = {
         user: localStorage.getItem('user'),
         nombre,
         direccion,
@@ -41,30 +64,18 @@ function CarritoScreen() {
         total,
         carrito
       };
-      const encoded = base64.encode(JSON.stringify(pedido))
-      console.log(encoded);
+      const encoded = base64.encode(JSON.stringify(aux))
+      setPedido(encoded)
       console.log(pedido)
-      //makePayment(encoded)
-      setRedsysParams(redsysParams);
-      setShowWebView(true);
-      if (showWebView && redsysParams) {
-        return <RedsysWebView redsysParams={redsysParams} />;
-      }
+      setShowWebView(true)
+      
   };
 
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+  const closeModal= () => {
+    setModalVisible(false)
+  }
 
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
 
-  const handleConfirm = (date) => {
-    const formattedDate = date.toLocaleString(); // Formatea la fecha seleccionada
-    sethoraEntrega(formattedDate);
-    hideDatePicker();
-  };
   const totalArticulos = carrito.reduce((total, item) => total + item.cantidad, 0);
   const subtotal = carrito.reduce((total, item) => total + item.articulo.PVPNETO * item.cantidad, 0);
   const tasaTransporte = calcularTasaTransporte(subtotal);
@@ -82,6 +93,7 @@ function CarritoScreen() {
   function renderItem({ item }) {
     return (
       <View style={styles.itemContainer}>
+        
         <RenderImagen codigoArticulo={item.articulo.CODARTICULO} />
         <View style={styles.itemDetails}>
           <Text style={styles.itemDescription}>{item.articulo.DESCRIPCION}</Text>
@@ -150,22 +162,31 @@ function CarritoScreen() {
             />
             <TextInput
               style={styles.input}
-              placeholder="Código Postal"
+              placeholder="Código Postal Ej. 12345"
               value={codigoPostal}
               onChangeText={setCodigoPostal}
-              keyboardType="numeric"
+              keyboardType="number"
             />
             <TextInput
                 style={styles.input}
-                placeholder="Hora de la entrega"
+                placeholder="Hora de la entrega HH:MM"
                 value={horaEntrega}
                 onChangeText={sethoraEntrega}
-                keyboardType="numeric"
               />
             <View style={styles.modalActions}>
               <Button title="Cancelar" onPress={() => setModalVisible(false)} />
               <Button title="Confirmar" onPress={handlePayment} />
             </View>
+          </View>
+        </View>
+      </Modal>
+       <Modal visible={showWebView} transparent={true} animationType='fade' onRequestClose={() => setShowWebView(false)}>
+        <View style={styles.modalContainer}>
+          <TouchableOpacity onPress={() => setShowWebView(false)}>
+            <Text>X</Text>
+          </TouchableOpacity>
+          <View style={styles.modalContent}>
+            <RedsysWebView pedido={pedido} onWebViewClose={() => setShowWebView(false)} />
           </View>
         </View>
       </Modal>

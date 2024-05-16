@@ -23,6 +23,8 @@ export const queries = {
 	getPedidosCliente: 'SELECT CODPEDIDO, FECHAPEDIDO, PVPTOTAL, STATUS_PEDIDO FROM PEDIDOS WITH(NOLOCK) WHERE CODCLIENTE = @CODCLIENTE',
 	getPedidoDetails: 'SELECT DESCRIPCION, CANTIDAD, PVP, COMENTARIO FROM LINPED WITH(NOLOCK) WHERE CODPEDIDO = @CODPEDIDO',
 	getPostalCodes: 'SELECT * FROM LOCALIDADES WITH(NOLOCK)',
+	sp_GetArticulosFav: 'OBTENER_ARTICULOS_FAVS',
+	sp_InserArticulosFavs: 'AÑADIR_ARTICULOS_FAVS',
 
 	sp_makePayment: 'RealizarPedido',
 	sp_insertLinpeds: 'InsertLinped',
@@ -30,6 +32,7 @@ export const queries = {
 	//Despartamentos(categorias)
 	getSeccionesFromCategoriaID: 'select CODDEPARTAMENTO, DESCRIPCION from DEPARTAMENTO with(nolock) where DEP_PADRE = @id',
 	getAllCategorias: 'select CODDEPARTAMENTO, DESCRIPCION, DEP_PADRE from DEPARTAMENTO with(nolock)', 
+	updatePedido: 'update PEDIDOS with(updlock) set STATUS_PEDIDO = 0 where CODPEDIDO = @id',
 	
 	
 

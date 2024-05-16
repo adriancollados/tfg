@@ -5,11 +5,13 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Desplegable } from '../components/DesplegablesPerfil';
 import { ScrollView } from 'react-native-web';
 
-const Profile = () => {
+const Profile = ({handleLogout}) => {
   const [usuario, setUsuario] = useState(null);
   const [error, setError] = useState(null);
   const [reloadUserData, setReloadUserData] = useState(false);
   const userId = localStorage.getItem('user');
+
+
 
   useEffect(() => {
     console.log(userId);
@@ -25,7 +27,16 @@ const Profile = () => {
   const handleUpdateUserData =() => {
     setReloadUserData(true)
   }
+  const handleLogoutPress = () => {
+    // Limpiar variables de localStorage
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    // Cualquier otra variable que necesites limpiar
+    // ...
 
+    // Llamar a la función de logout del prop
+    handleLogout();
+  };
   return (
     <ScrollView style={styles.container}>
       <View style={styles.containerLogo}>
@@ -39,6 +50,10 @@ const Profile = () => {
       <Desplegable titulo="Datos personales" children={usuario} onUpdateUserData={handleUpdateUserData}></Desplegable>
       <Desplegable titulo="Historial de pedidos" children={usuario}></Desplegable>
       <Desplegable titulo="Mis puntos" children={usuario}></Desplegable>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogoutPress}>
+          <Text style={styles.logoutButtonText}>Cerrar sesión</Text>
+      </TouchableOpacity>
     </ScrollView>
     
   );
@@ -134,6 +149,7 @@ const styles = StyleSheet.create({
   },
   infoTitulo: {
     fontWeight: 'bold',
+    color: 'white',
   },
   seccionTitulo: {
     fontSize: 18,
@@ -144,6 +160,18 @@ const styles = StyleSheet.create({
   desplegableContenido: {
     marginLeft: 20,
     marginTop: 5,
+  },
+  logoutButton: {
+    backgroundColor: '#C00A21',
+    padding: 15,
+    borderRadius: 30,
+    marginTop: 50,
+    alignSelf: 'center',
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 

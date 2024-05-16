@@ -8,5 +8,6 @@ export default{
     dbPassword: process.env.PASSWORD || '',
     dbserver: process.env.SERVER || '',
     dbDatabase: process.env.DATABASE || '',
+    ivKey: process.env.IVKey
 
 }

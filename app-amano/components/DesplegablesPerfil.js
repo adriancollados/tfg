@@ -127,7 +127,7 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
       <MaterialIcons
         name={abierto ? 'keyboard-arrow-up' : 'keyboard-arrow-down'}
         size={24}
-        color="black"
+        color="white"
       />
     </TouchableOpacity>
       {abierto && (
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   },
   titulo: {
     fontSize: 18,
-    fontWeight: 'bold',
+    color: 'white',
   },
   contenido: {
     padding: 10,

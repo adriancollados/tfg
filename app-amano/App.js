@@ -24,11 +24,13 @@ export default function App() {
   const handleLogin = () => {
     setIsLoggedIn(true);
   }
-
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   return (
     <NavigationContainer>
-        {isLoggedIn ? <MainTabNavigator /> : <AuthStack onLogin={handleLogin}/>}
+        {isLoggedIn ? <MainTabNavigator handleLogout={handleLogout}/> : <AuthStack onLogin={handleLogin}/>}
     </NavigationContainer>
   )
 }
