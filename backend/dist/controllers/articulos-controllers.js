@@ -4,7 +4,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateArticulos = exports.getArticulosFromSeccion = exports.getArticulosFromCategoria = exports.getArticulosCount = exports.getArticulos = exports.getArticulo = exports.deleteArticulos = exports.createArticulos = void 0;
+exports.updateArticulos = exports.getArticulosFromSeccionCategoria = exports.getArticulosFromSeccion = exports.getArticulosFromCategoria = exports.getArticulosCount = exports.getArticulos = exports.getArticulo = exports.deleteArticulos = exports.createArticulos = void 0;
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 var _database = require("../database");
@@ -60,7 +60,9 @@ var getArticulo = /*#__PURE__*/function () {
           result = _context2.sent;
           if (result == null) {
             res.status(404);
-            res.send("El articulo no se ha encontrado");
+            res.send({
+              message: "El articulo no se ha encontrado"
+            });
           } else {
             res.json(result.recordset[0]);
           }
@@ -100,7 +102,9 @@ var getArticulosFromSeccion = /*#__PURE__*/function () {
           result = _context3.sent;
           if (result == null) {
             res.status(404);
-            res.send("El articulo no se ha encontrado");
+            res.send({
+              message: "El articulo no se ha encontrado"
+            });
           } else {
             res.json(result.recordset);
           }
@@ -122,64 +126,93 @@ var getArticulosFromSeccion = /*#__PURE__*/function () {
   };
 }();
 exports.getArticulosFromSeccion = getArticulosFromSeccion;
-var getArticulosFromCategoria = /*#__PURE__*/function () {
+var getArticulosFromSeccionCategoria = /*#__PURE__*/function () {
   var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res) {
-    var id, pool, result;
+    var _req$params, categoriaId, seccionId, _req$query, _req$query$pageNumber, pageNumber, _req$query$pageSize, pageSize, pool, startIndex, result;
     return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
-          id = req.params.id;
-          _context4.prev = 1;
-          _context4.next = 4;
+          _req$params = req.params, categoriaId = _req$params.categoriaId, seccionId = _req$params.seccionId;
+          _req$query = req.query, _req$query$pageNumber = _req$query.pageNumber, pageNumber = _req$query$pageNumber === void 0 ? 1 : _req$query$pageNumber, _req$query$pageSize = _req$query.pageSize, pageSize = _req$query$pageSize === void 0 ? 15 : _req$query$pageSize; // Configuración de la paginación
+          _context4.prev = 2;
+          _context4.next = 5;
           return (0, _database.getConnection)();
-        case 4:
+        case 5:
           pool = _context4.sent;
-          _context4.next = 7;
-          return pool.request().input('id', id).query(_database.queries.getArticulosFromCategoria);
-        case 7:
+          startIndex = (pageNumber - 1) * pageSize; // Índice inicial de la paginación
+          _context4.next = 9;
+          return pool.request().input('categoriaId', categoriaId).input('seccionId', seccionId).input('startIndex', startIndex).input('pageSize', pageSize).query(_database.queries.getArticulosFromSeccionCategoria);
+        case 9:
           result = _context4.sent;
-          if (result == null) {
-            res.status(404);
-            res.send("El articulo no se ha encontrado");
+          if (!result.recordset || result.recordset.length === 0) {
+            res.status(404).send({
+              message: "No se encontraron artículos para la categoría y sección especificadas"
+            });
           } else {
             res.json(result.recordset);
           }
-          _context4.next = 15;
+          _context4.next = 16;
           break;
-        case 11:
-          _context4.prev = 11;
-          _context4.t0 = _context4["catch"](1);
-          res.status(500);
-          res.send(_context4.t0.message);
-        case 15:
+        case 13:
+          _context4.prev = 13;
+          _context4.t0 = _context4["catch"](2);
+          res.status(500).send({
+            error: _context4.t0.message
+          });
+        case 16:
         case "end":
           return _context4.stop();
       }
-    }, _callee4, null, [[1, 11]]);
+    }, _callee4, null, [[2, 13]]);
   }));
-  return function getArticulosFromCategoria(_x7, _x8) {
+  return function getArticulosFromSeccionCategoria(_x7, _x8) {
     return _ref4.apply(this, arguments);
+  };
+}();
+exports.getArticulosFromSeccionCategoria = getArticulosFromSeccionCategoria;
+var getArticulosFromCategoria = /*#__PURE__*/function () {
+  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(req, res) {
+    var id, pool, result;
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
+      while (1) switch (_context5.prev = _context5.next) {
+        case 0:
+          id = req.params.id;
+          _context5.prev = 1;
+          _context5.next = 4;
+          return (0, _database.getConnection)();
+        case 4:
+          pool = _context5.sent;
+          _context5.next = 7;
+          return pool.request().input('id', id).query(_database.queries.getArticulosFromCategoria);
+        case 7:
+          result = _context5.sent;
+          if (result == null || result.recordset.length === 0) {
+            res.status(404);
+            res.send({
+              message: "No se han encontrado articulos"
+            });
+          } else {
+            res.json(result.recordset);
+          }
+          _context5.next = 15;
+          break;
+        case 11:
+          _context5.prev = 11;
+          _context5.t0 = _context5["catch"](1);
+          res.status(500);
+          res.send(_context5.t0.message);
+        case 15:
+        case "end":
+          return _context5.stop();
+      }
+    }, _callee5, null, [[1, 11]]);
+  }));
+  return function getArticulosFromCategoria(_x9, _x10) {
+    return _ref5.apply(this, arguments);
   };
 }();
 exports.getArticulosFromCategoria = getArticulosFromCategoria;
 var getArticulosCount = /*#__PURE__*/function () {
-  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(req, res) {
-    return _regenerator["default"].wrap(function _callee5$(_context5) {
-      while (1) switch (_context5.prev = _context5.next) {
-        case 0:
-          res.send("Hola");
-        case 1:
-        case "end":
-          return _context5.stop();
-      }
-    }, _callee5);
-  }));
-  return function getArticulosCount(_x9, _x10) {
-    return _ref5.apply(this, arguments);
-  };
-}();
-exports.getArticulosCount = getArticulosCount;
-var createArticulos = /*#__PURE__*/function () {
   var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(req, res) {
     return _regenerator["default"].wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
@@ -191,12 +224,12 @@ var createArticulos = /*#__PURE__*/function () {
       }
     }, _callee6);
   }));
-  return function createArticulos(_x11, _x12) {
+  return function getArticulosCount(_x11, _x12) {
     return _ref6.apply(this, arguments);
   };
 }();
-exports.createArticulos = createArticulos;
-var deleteArticulos = /*#__PURE__*/function () {
+exports.getArticulosCount = getArticulosCount;
+var createArticulos = /*#__PURE__*/function () {
   var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(req, res) {
     return _regenerator["default"].wrap(function _callee7$(_context7) {
       while (1) switch (_context7.prev = _context7.next) {
@@ -208,12 +241,12 @@ var deleteArticulos = /*#__PURE__*/function () {
       }
     }, _callee7);
   }));
-  return function deleteArticulos(_x13, _x14) {
+  return function createArticulos(_x13, _x14) {
     return _ref7.apply(this, arguments);
   };
 }();
-exports.deleteArticulos = deleteArticulos;
-var updateArticulos = /*#__PURE__*/function () {
+exports.createArticulos = createArticulos;
+var deleteArticulos = /*#__PURE__*/function () {
   var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res) {
     return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) switch (_context8.prev = _context8.next) {
@@ -225,8 +258,25 @@ var updateArticulos = /*#__PURE__*/function () {
       }
     }, _callee8);
   }));
-  return function updateArticulos(_x15, _x16) {
+  return function deleteArticulos(_x15, _x16) {
     return _ref8.apply(this, arguments);
+  };
+}();
+exports.deleteArticulos = deleteArticulos;
+var updateArticulos = /*#__PURE__*/function () {
+  var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9(req, res) {
+    return _regenerator["default"].wrap(function _callee9$(_context9) {
+      while (1) switch (_context9.prev = _context9.next) {
+        case 0:
+          res.send("Hola");
+        case 1:
+        case "end":
+          return _context9.stop();
+      }
+    }, _callee9);
+  }));
+  return function updateArticulos(_x17, _x18) {
+    return _ref9.apply(this, arguments);
   };
 }();
 exports.updateArticulos = updateArticulos;

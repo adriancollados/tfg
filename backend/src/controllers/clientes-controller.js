@@ -91,7 +91,7 @@ export const login = async (req, res) => {
             const user = await pool.request().input('EMAIL', EMAIL).query(queries.getClienteLogin)
             if (user && user.recordset[0].fechabaja == null) {
 
-                const password = Cliente.decryptCardNumber(user.recordset[0].pass, IVKey);
+                const password = Cliente.decrypt(user.recordset[0].pass, IVKey);
                 if (Cliente.isValidPassword(password, user.recordset[0].pass)) {
                     const token = getTokenFromUser(user.recordset[0])
                     res.status(201).send({data: "OK",codcliente: user.recordset[0].codcliente, user: user.recordset[0].nombrecliente, token: token}) ;

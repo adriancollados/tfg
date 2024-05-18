@@ -11,6 +11,7 @@ var _default = {
   dbUser: process.env.USER || '',
   dbPassword: process.env.PASSWORD || '',
   dbserver: process.env.SERVER || '',
-  dbDatabase: process.env.DATABASE || ''
+  dbDatabase: process.env.DATABASE || '',
+  ivKey: process.env.IVKey
 };
 exports["default"] = _default;

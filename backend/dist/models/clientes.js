@@ -137,23 +137,23 @@ Cliente.maskCardNumber = function (cardNumber) {
   console.log("Mask: " + maskedCard);
   return maskedCard;
 };
-Cliente.encryptCardNumber = function (cardNumber, key) {
+Cliente.encrypt = function (cadena, key) {
   var algorithm = 'aes-256-cbc'; // Algoritmo de cifrado AES-256-CBC
   var keyHash = crypto.createHash('sha256').update(key, 'utf8').digest('base64').substr(0, 32); // Hash de la clave
   var iv = crypto.randomBytes(16); // Vector de inicialización aleatorio
   var cipher = crypto.createCipheriv(algorithm, keyHash, iv); // Cifrador AES
-  var encrypted = cipher.update(cardNumber, 'utf8', 'base64'); // Cifra el número de tarjeta
+  var encrypted = cipher.update(cadena, 'utf8', 'base64'); // Cifra el número de tarjeta
   encrypted += cipher["final"]('base64'); // Finaliza el cifrado
-  var encryptedCardNumber = "".concat(iv.toString('hex'), ":").concat(encrypted); // Concatena el vector de inicialización y el número de tarjeta cifrado
-  return encryptedCardNumber;
+  var encryptedCadena = "".concat(iv.toString('hex'), ":").concat(encrypted); // Concatena el vector de inicialización y el número de tarjeta cifrado
+  return encryptedCadena;
 };
-Cliente.decryptCardNumber = function (card, key) {
+Cliente.decrypt = function (cadena, key) {
   var algorithm = 'aes-256-cbc'; // Algoritmo de cifrado AES-256-CBC
   var keyHash = crypto.createHash('sha256').update(key, 'utf8').digest('base64').substr(0, 32); // Hash de la clave
-  var _card$split = card.split(':'),
-    _card$split2 = (0, _slicedToArray2["default"])(_card$split, 2),
-    ivHex = _card$split2[0],
-    encrypted = _card$split2[1]; // Separa el vector de inicialización y el número de tarjeta cifrado
+  var _cadena$split = cadena.split(':'),
+    _cadena$split2 = (0, _slicedToArray2["default"])(_cadena$split, 2),
+    ivHex = _cadena$split2[0],
+    encrypted = _cadena$split2[1]; // Separa el vector de inicialización y el número de tarjeta cifrado
   var iv = Buffer.from(ivHex, 'hex'); // Convierte el vector de inicialización a buffer
   var decipher = crypto.createDecipheriv(algorithm, keyHash, iv); // Descifrador AES
   var decrypted = decipher.update(encrypted, 'base64', 'utf8'); // Descifra el número de tarjeta
@@ -174,11 +174,14 @@ Cliente.decodeBase64Credentials = function (credentials) {
   } else {
     try {
       var decodedCredentials = atob(credentials);
-      var _decodedCredentials$s = decodedCredentials.split(':'),
-        _decodedCredentials$s2 = (0, _slicedToArray2["default"])(_decodedCredentials$s, 2),
-        email = _decodedCredentials$s2[0],
-        password = _decodedCredentials$s2[1];
-      return [email, password];
+      console.log(decodedCredentials);
+      // Convertir la cadena decodificada a un objeto JavaScript
+      var credentialsObject = JSON.parse(decodedCredentials);
+      console.log(credentialsObject);
+      // Extraer valores del objeto
+      var email = credentialsObject.email;
+      var pass = credentialsObject.pass;
+      return [email, pass];
     } catch (error) {
       console.error('Error decoding base64 credentials:', error);
       return null;

@@ -67,7 +67,7 @@ const ListaPedidos = ({ }) => {
                         <ScrollView contentContainerStyle={styles.modalContent}>
                             {/* Contenido del modal */}
                             {pedidoSeleccionado && (
-                                <>
+                                <View key={pedidoSeleccionado.CODPEDIDO}>
                                     <Text style={styles.subtitulo}>Productos:</Text>
                                     <View style={styles.tableContainer}>
                                         <View style={styles.tableRow}>
@@ -88,7 +88,7 @@ const ListaPedidos = ({ }) => {
                                     <TouchableOpacity onPress={handleCloseModal}>
                                         <Text style={styles.closeButton}>Cerrar</Text>
                                     </TouchableOpacity>
-                                </>
+                                </View>
                             )}
                         </ScrollView>
                     </View>

@@ -101,7 +101,7 @@ const obtenerArticulosFavs = async () => {
       },
     };
     try {
-      const data = await fetch(`${url_base}/clientes/perfil/${user}/favoritos`, options);
+      const data = await fetch(`${url_base}/clientes/${user}/favoritos`, options);
       if(data.status === 200) {
           return data.json() // Parsea la respuesta JSON
       } else {

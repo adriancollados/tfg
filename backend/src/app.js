@@ -9,6 +9,8 @@ import payments from "./routes/paymentRoutes";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import { options } from "./swaggerOptions";
+
+
 const specs = swaggerJSDoc(options);
 
 const app = express();
