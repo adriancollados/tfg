@@ -249,21 +249,21 @@ Cliente.maskCardNumber = function(cardNumber) {
     return maskedCard;
 }
 
-Cliente.encryptCardNumber = function(cardNumber, key) {
+Cliente.encrypt = function(cadena, key) {
     const algorithm = 'aes-256-cbc'; // Algoritmo de cifrado AES-256-CBC
     const keyHash = crypto.createHash('sha256').update(key, 'utf8').digest('base64').substr(0, 32); // Hash de la clave
     const iv = crypto.randomBytes(16); // Vector de inicialización aleatorio
     const cipher = crypto.createCipheriv(algorithm, keyHash, iv); // Cifrador AES
-    let encrypted = cipher.update(cardNumber, 'utf8', 'base64'); // Cifra el número de tarjeta
+    let encrypted = cipher.update(cadena, 'utf8', 'base64'); // Cifra el número de tarjeta
     encrypted += cipher.final('base64'); // Finaliza el cifrado
-    const encryptedCardNumber = `${iv.toString('hex')}:${encrypted}`; // Concatena el vector de inicialización y el número de tarjeta cifrado
-    return encryptedCardNumber;
+    const encryptedCadena = `${iv.toString('hex')}:${encrypted}`; // Concatena el vector de inicialización y el número de tarjeta cifrado
+    return encryptedCadena;
   }
   
-  Cliente.decryptCardNumber= function(card, key) {
+  Cliente.decrypt= function(cadena, key) {
       const algorithm = 'aes-256-cbc'; // Algoritmo de cifrado AES-256-CBC
       const keyHash = crypto.createHash('sha256').update(key, 'utf8').digest('base64').substr(0, 32); // Hash de la clave
-      const [ivHex, encrypted] = card.split(':'); // Separa el vector de inicialización y el número de tarjeta cifrado
+      const [ivHex, encrypted] = cadena.split(':'); // Separa el vector de inicialización y el número de tarjeta cifrado
       const iv = Buffer.from(ivHex, 'hex'); // Convierte el vector de inicialización a buffer
       const decipher = crypto.createDecipheriv(algorithm, keyHash, iv); // Descifrador AES
       let decrypted = decipher.update(encrypted, 'base64', 'utf8'); // Descifra el número de tarjeta

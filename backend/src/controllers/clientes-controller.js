@@ -11,9 +11,9 @@ const mapearEstadoPedido = (estado) => {
         case -1: 
             return "Fallido"
         case 0:
-            return "Pagado";
+            return "Creado";
         case 1:
-            return "En reparto";
+            return "Pagado";
         case 2:
             return "Entregado";
         default:
@@ -41,9 +41,8 @@ export const getCliente = async (req, res) => {
 export const registro = async (req, res) => {
     try {
         if(req.body != null) {
-            const password = Cliente.encryptCardNumber(req.body.PASS, IVKey);
-            const cvc = Cliente.encryptCardNumber(req.body.CVC, IVKey);
-            //const tipoCliente = "cliente"//(req.body.TIPOUSUARIO != null) ? req.body.TIPOUSUARIO : "cliente";
+            const password = Cliente.encrypt(req.body.PASS, IVKey);
+            
             const pool = await getConnection();
             const { recordset } = await pool.request().query(queries.getLastIdCLiente);
             const codCli = recordset[0].CODCLIENTE;

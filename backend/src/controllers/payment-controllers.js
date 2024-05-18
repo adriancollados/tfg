@@ -36,8 +36,6 @@ export const makePayment = async (req, res) => {
                 if(result != null) {
                     const orderId = result.recordset[0].CODPEDIDO.toString() ; // Ejemplo de ID de pedido
                     const amount = parseInt(data.total * 100)
-                    // Aquí guardarías los datos del pedido en la base de datos
-                    console.log(token.id)
 
 
                      // Crea el cargo utilizando el token de tarjeta y los detalles del pedido
@@ -50,14 +48,12 @@ export const makePayment = async (req, res) => {
                         automatic_payment_methods: {
                             enabled: true, // Habilitar métodos de pago automáticos
                             allow_redirects: 'never' // No permitir redirecciones de página completa
-                        }
+                        } ,
+                        metadata: {pedido: JSON.stringify(data)}
                     });
-
-                    console.log(charge.status)
 
                     if(charge.status === 'succeeded') {
                         for(const linped of data.carrito) {
-                            //console.log(codpedido+ '|' + linped.articulo.CODARTICULO + '|' + linped.articulo.DESCRIPCION + '|' + linped.cantidad + '|' + linped.articulo.PVPNETO +'|' + isStringNullOrEmpty(linped.comentario) )
                             const resultLinped = await pool.request()
                                 .input('CODPEDIDO', orderId)
                                 .input('CODARTICULO', linped.articulo.CODARTICULO)
@@ -77,6 +73,7 @@ export const makePayment = async (req, res) => {
                                 }                          
                         }
                         if(contador == data.carrito.length) {
+                            await pool.request().input('id', orderId).query(queries.updatePedidoOK)
                             res.status(200).json({ message: 'Pago procesado correctamente'});
                         }
                         else{
@@ -87,7 +84,7 @@ export const makePayment = async (req, res) => {
                     else{
                         res.status(502);
                         res.send({error: "PAYMENT_ERROR"});
-                        await pool.request().input('id', orderId).query(queries.updatePedido)
+                        await pool.request().input('id', orderId).query(queries.updatePedidoKO)
                     }
                 }
             }

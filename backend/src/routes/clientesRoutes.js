@@ -6,7 +6,7 @@ const { isAuthenticated } = require("../utils/auth");
 /**
  * @swagger
  * tag:
- *  name: clientes
+ *  name: Clientes
  *  description: clientes endpoint
  */
 /**
@@ -223,7 +223,7 @@ router.get('/clientes/perfil/:id/pedidos/:pedido', isAuthenticated, clienteContr
 
 /**
  * @swagger
- * /clientes/perfil/{id}/favoritos:
+ * /clientes/{id}/favoritos:
  *   get:
  *     summary: Articulos favoritos de un cliente
  *     tags: 
@@ -245,12 +245,12 @@ router.get('/clientes/perfil/:id/pedidos/:pedido', isAuthenticated, clienteContr
  *       '500':
  *         description: Error interno del servidor
  */
-router.get('/clientes/perfil/:id/favoritos', isAuthenticated, clienteController.getFavoritos);
+router.get('/clientes/:id/favoritos', isAuthenticated, clienteController.getFavoritos);
 
 /**
  * @swagger
- * /clientes/perfil/{id}/favoritos:
- *   get:
+ * /clientes/{id}/favoritos:
+ *   post:
  *     summary: Articulos favoritos de un cliente
  *     tags: 
  *       - clientes
