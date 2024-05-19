@@ -7,12 +7,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 const ItemsFavs = () => {
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const [favList, setFavList] = useState([])
+  const [isFavList, setIsFavList] = useState(true)
 
   useEffect(() => {
     const getArticulos = async () =>{
       try{
         const data = await obtenerArticulosFavs()
         setFavList([...data])
+        setIsFavList(false)
       }
       catch(e){
         console.error(e)
@@ -61,9 +63,16 @@ const ItemsFavs = () => {
       </View>
     );
   }
+  function renderIsFavList() {
+    return(<View style={styles.emptyList}>
+      <Text style={{fontSize: 24,
+          fontWeight: 'bold', textAlign: 'center',}}>Aun no tienes artículos favoritos. ¡Añade alguno en el catálogo!</Text>
+      </View>)
+  }
   return(
     <View style={styles.container}>
       <SuccessModal visible={successModalVisible} onClose={() => setSuccessModalVisible(false)} />
+      {!isFavList && renderIsFavList()}
       <FlatList
         data={favList}
         renderItem={renderItem}
@@ -226,4 +235,18 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: 'bold',
   },
+  emptyList:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: 10,
+    marginTop: 80,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+    height: 300
+  }
 })

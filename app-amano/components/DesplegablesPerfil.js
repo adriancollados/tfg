@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Button} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons'; // Importa el icono de MaterialIcons
 import swal from 'sweetalert2';
@@ -14,6 +14,10 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
     TELEFONO:  '',
     DIRECCION:  '',
   });*/
+
+  useEffect(() => {
+
+  }, [children])
   // Verificar si hay datos de usuario
   const esDatosPersonales = titulo === "Datos personales" && children !== undefined;
   // Verificar si se trata de historial de pedidos
@@ -33,6 +37,7 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
         <p><strong>Email: </strong>${children.EMAIL}</p>
         <p><strong>Provincia: </strong>${children.PROVINCIA ? children.PROVINCIA : ""}</p>
         <p><strong>Dirección: </strong>${children.DIRECCION ? children.DIRECCION : ""}</p>
+        <p><strong>Población: </strong>${children.POBLACION ? children.POBLACION : ""}</p>
       </div>
     `;
     const contentEdit = `
@@ -43,6 +48,10 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
         <input id="telefono" type="text" placeholder="${children.TELEFONO}" />
         <p><strong>Direccion</strong></p>
         <input id="direccion" type="text" placeholder="${children.DIRECCION}" />
+        <p><strong>Provincia</strong></p>
+        <input id="provincia" type="text" placeholder="${children.PROVINCIA}" />
+        <p><strong>Poblacion</strong></p>
+        <input id="poblacion" type="text" placeholder="${children.POBLACION}" />
       </div>
     `;
 
@@ -64,19 +73,24 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
           confirmButtonText: 'Guardar',
           cancelButtonText: 'Cancelar',
           preConfirm: () => {
-            const name = document.getElementById('name').value;
-            const telefono = document.getElementById('telefono').value;
-            const direccion = document.getElementById('direccion').value;
+            const name = document.getElementById('name').value || children.NOMBRECLIENTE;
+            const telefono = document.getElementById('telefono').value || children.TELEFONO;
+            const direccion = document.getElementById('direccion').value || children.DIRECCION;
+            const provincia = document.getElementById('provincia').value || children.PROVINCIA;
+            const poblacion = document.getElementById('poblacion').value || children.POBLACION;
+
             
             // Validar el teléfono
-            if (!Number.isInteger(Number(telefono)) || telefono.length < 9 || telefono.length > 15) {
+            if (!Number.isInteger(Number(telefono)) || telefono.length < 9 && telefono.length > 15) {
               throw new Error("El teléfono debe ser un número entero y tener entre 9 y 15 caracteres");
             }
 
             return{
               NOMBRECLIENTE: name,
               TELEFONO: telefono,
-              DIRECCION: direccion
+              DIRECCION: direccion,
+              PROVINCIA: provincia,
+              POBLACION: poblacion,
             };
           },
         }).then(response => {
@@ -139,7 +153,7 @@ export const Desplegable = ({ titulo, children, onUpdateUserData }) => {
           {esMisPuntos && (
             <View>
               {/* Mostrar puntos del usuario */}
-              <Text>{`Tienes un total de: ${children.PUNTOSCLIENTE} puntos`}</Text>
+              <Text>{`Tienes un total de: ${children.PUNTOSCLIENTE || 0} puntos`}</Text>
             </View>
           )}
         </View>

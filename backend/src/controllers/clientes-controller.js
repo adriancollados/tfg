@@ -41,7 +41,12 @@ export const getCliente = async (req, res) => {
 export const registro = async (req, res) => {
     try {
         if(req.body != null) {
-            const password = Cliente.encrypt(req.body.PASS, IVKey);
+            const data = JSON.parse(atob(req.body.t));
+            const { name, lastname, email, password, direccion, phone } = data;
+        
+            // Decodificar la contraseña de Base64
+            const decodedPassword = atob(password);
+            const pass= Cliente.encrypt(atob(decodedPassword), IVKey);
             
             const pool = await getConnection();
             const { recordset } = await pool.request().query(queries.getLastIdCLiente);
@@ -56,19 +61,14 @@ export const registro = async (req, res) => {
             }            
             const result = await pool.request()
                 .input('CODCLIENTE', newCodCli)
-                .input('NOMBRECLIENTE', req.body.NOMBRECLIENTE)
-                .input('DIRECCION', req.body.DIRECCION1)
-                .input('CODPOSTAL', req.body.CODPOSTAL)
-                .input('POBLACION', req.body.POBLACION)
-                .input('PROVINCIA', req.body.PROVINCIA)
-                .input('TELEFONO', req.body.TELEFONO)
-                .input('EMAIL', req.body.E_MAIL)
-                .input('PASS', password)
-                .input('FECHAALTA', req.body.FECHAALTA)
-                .input('CIF', req.body.CIF)
+                .input('NOMBRECLIENTE', name + ' ' + lastname)
+                .input('DIRECCION', direccion)
+                .input('TELEFONO', phone)
+                .input('EMAIL', email)
+                .input('PASS', pass)
                 .query(queries.addCliente)
             console.log('OK')
-            return res.send(result.recordset)
+            return res.status(200).send(result.recordset)
             
         }
         else {
@@ -78,6 +78,7 @@ export const registro = async (req, res) => {
     } catch (e) {
         res.status(500)
         res.send({error: e.message})
+        console.error(e)
     }
 }
 
@@ -86,7 +87,6 @@ export const login = async (req, res) => {
     try {
         const pool = await getConnection();
         const [EMAIL, PASS] = Cliente.decodeBase64Credentials(req.body.t)
-        console.log(EMAIL + '/' + PASS)
         if (EMAIL && PASS) {
             const user = await pool.request().input('EMAIL', EMAIL).query(queries.getClienteLogin)
             if (user && user.recordset[0].fechabaja == null) {
@@ -134,7 +134,7 @@ export const editarPerfil = async (req, res) => {
     try{
         if(req.body != null){
             const pool = await getConnection();
-            const { NOMBRECLIENTE, DIRECCION, TELEFONO} = req.body;
+            const { NOMBRECLIENTE, DIRECCION, TELEFONO, PROVINCIA, POBLACION} = req.body;
 
             const user  = await pool.request().input('id', id).query(queries.getClienteId)
             
@@ -145,6 +145,8 @@ export const editarPerfil = async (req, res) => {
                 NOMBRECLIENTE ? updateFields.NOMBRECLIENTE = NOMBRECLIENTE : updateFields.NOMBRECLIENTE = null;
                 DIRECCION ? updateFields.DIRECCION = DIRECCION : updateFields.DIRECCION = null;
                 TELEFONO ? updateFields.TELEFONO = TELEFONO : updateFields.TELEFONO = null;
+                PROVINCIA ? updateFields.PROVINCIA = PROVINCIA : updateFields.PROVINCIA = null;
+                POBLACION ? updateFields.POBLACION = POBLACION: updateFields.POBLACION = null;
                 id ? updateFields.CODCLIENTE = id : updateFields.CODCLIENTE = null;
 
                 if(Object.keys(updateFields).length > 0){
@@ -153,6 +155,8 @@ export const editarPerfil = async (req, res) => {
                         .input('NOMBRECLIENTE', updateFields.NOMBRECLIENTE)
                         .input('DIRECCION', updateFields.DIRECCION)
                         .input('TELEFONO', updateFields.TELEFONO)
+                        .input('PROVINCIA', updateFields.PROVINCIA)
+                        .input('POBLACION', updateFields.POBLACION)
 
 
                     const result = await request.execute(queries.updateCliente);

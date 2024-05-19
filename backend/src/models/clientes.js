@@ -287,10 +287,8 @@ Cliente.encrypt = function(cadena, key) {
     else{
         try{
             const decodedCredentials = atob(credentials);
-            console.log(decodedCredentials);
             // Convertir la cadena decodificada a un objeto JavaScript
             const credentialsObject = JSON.parse(decodedCredentials);
-            console.log(credentialsObject)
             // Extraer valores del objeto
             const email = credentialsObject.email;
             const pass = credentialsObject.pass;
