@@ -66,8 +66,8 @@ const CatalogoSeccionesStack = () => {
             headerTitleStyle: { color: '#FFFFFF' },
         })}>
             <Stack.Screen name="Secciones" component={Categories} options={({ navigation })}/>
-            <Stack.Screen name="Catalogo" component={Catalogo} options={({ navigation  })}/>
-            <Stack.Screen name="DetallesArticulo" component={DetallesArticulo} options={{navigation}}/>
+            <Stack.Screen name="Catálogo" component={Catalogo} options={({ navigation  })}/>
+            <Stack.Screen name="Detalles del artículo" component={DetallesArticulo} options={{navigation}}/>
 
         </Stack.Navigator>
     )
@@ -97,7 +97,7 @@ const MainTabNavigator = ({handleLogout}) => {
                         )  
                     })}
                 />
-                <Tab.Screen name="Articulos favoritos" component={ItemsFavs}
+                <Tab.Screen name="Artículos favoritos" component={ItemsFavs}
                     options={() => ({
                         tabBarIcon: ({focused}) => (
                             <MaterialCommunityIcons name="star" color={'#FFFFFF'} size={30}/>

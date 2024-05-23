@@ -50,12 +50,12 @@ const Categories = ({navigation}) => {
       if(!tieneSubcategorias){
         console.log('codigo', codigoDepartamento);
         const cod_padre = 0
-        return navigation.navigate("Catalogo", {codigoDepartamento, cod_padre})
+        return navigation.navigate("Catálogo", {codigoDepartamento, cod_padre})
       }
     };
 
     const handleCategoriaPress = (codigoDepartamento, cod_padre) => {
-      navigation.navigate('Catalogo', { codigoDepartamento, cod_padre });
+      navigation.navigate('Catálogo', { codigoDepartamento, cod_padre });
     };
   
 

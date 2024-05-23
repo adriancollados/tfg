@@ -91,7 +91,7 @@ const ProductDetails = ({}) => {
                 </View>
                 <View style={styles.headerContainer}>
                     <View style={styles.descriptionContainer}>
-                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Articulos Relacionados</Text>
+                        <Text style={{ fontSize: 25, fontWeight: 'bold' }}>Artículos Relacionados</Text>
                     </View>
                 </View>
                 <ScrollView contentContainerStyle={styles.contenedorArticulos}>

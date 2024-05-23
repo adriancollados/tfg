@@ -76,7 +76,7 @@ const Catalogo = ({navigation}) => {
   const onPressArticulo = (articulo, articulos) => {
     const articulosRelacionados = obtenerRelacionados(articulos);
     // Aquí iría la lógica para redirigir a la pantalla de detalles del artículo
-    return navigation.navigate('DetallesArticulo', { articulo,  articulosRelacionados});
+    return navigation.navigate('Detalles del artículo', { articulo,  articulosRelacionados});
   };
 
   const doesImageExist = (codigoArticulo) => {

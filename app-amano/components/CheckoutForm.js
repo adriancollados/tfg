@@ -149,7 +149,7 @@ const styles = {
       marginTop: '5px',
     },
     submitButton: {
-      backgroundColor: '#007bff',
+      backgroundColor: '#C00A21',
       color: '#fff',
       border: 'none',
       borderRadius: '5px',
